@@ -1,0 +1,292 @@
+<!DOCTYPE html>
+<html xmlns:layout="http://www.w3.org/1999/xhtml"
+	xmlns:th="http://www.w3.org/1999/xhtml"
+	layout:decorator="../layout/default"
+	xmlns:sec="http://www.thymeleaf.org/thymeleaf-extras-springsecurity4">
+
+<head>
+	<meta charset="utf-8"/>
+	<title>公会详情</title>
+	<link href="/css/plugins/iCheck/custom.css" rel="stylesheet">
+	<script th:src="@{/js/plugins/iCheck/icheck.min.js}"></script>
+	<style>
+.mod_box .bg_col {
+	padding: 2px 0;
+	margin-bottom: 14px;
+	background-color: #dff0d8;
+	border: 1px solid #e1e1e8;
+	border-radius: 4px;
+}
+
+.t_lab {
+	display: block;
+	padding: 10px 15px;
+	overflow: hidden;
+}
+
+.t_lab label {
+	float: left;
+	width: 80px;
+	text-align: right;
+	margin: auto;
+}
+
+.t_lab label:after {
+	content: ":";
+	margin: auto 3px;
+}
+
+.t_lab .lab_con {
+	font-size: 14px;
+	margin-right: 25px;
+	float: left;
+	font-family: none;
+}
+
+.mod_box .span_h {
+	position: relative;
+	color: #999;
+	font-size: 12px;
+	margin-left: 3px;
+	padding-left: 3px;
+	line-height: 22px;
+	border-left: 1px solid #cdcdcd;
+}
+.pag_c_l .cl_wl dl{margin:auto;padding:0;display:inline-block;}
+.pag_c_l .cl_wl dd{float:left;margin-right:5px;}
+.dtl ul {list-style-type :none;float:left; padding-left:0px}
+.onoffswitch{width:65px}
+.onoffswitch-inner:before{content:"已开票"}
+.onoffswitch-inner:after{content:"未开票"}
+.onoffswitch-switch{right:46px}
+.onoffswitch-label{margin-bottom:0}
+</style>
+</head>
+
+<div layout:fragment="content">
+	<div class="row border-bottom">
+        <nav class="navbar navbar-static-top" role="navigation" style="margin-bottom: 0" th:include="../layout/left :: right_head"> </nav>
+        <div class="pageheader">
+	         <ol class="breadcrumb">
+				<li><a href="/">首页</a></li>
+				<li><a href="/company/list">公会管理</a></li>
+				<li class="active">公会详情</li>
+			</ol>
+			
+			<!-- 详情头部信息 -->
+			<div class="content pag_con">
+				<div class="row">
+					<div class="col-md-7">
+						<h1><span >公会信息</span></h1>
+						<div class="row pag_c_l">
+							<div class="cl_wl">
+								<div class="tit">公会编码</div>
+								<div class="dtl" th:text="${company.companyCode}"></div>
+							</div>
+							<div class="cl_wl">
+								<div class="tit">公会名称</div>
+								<div class="dtl" th:text="${company.companyName}"></div>
+							</div>
+							<div class="cl_wl">
+								<div class="tit">公会类型</div>
+								<div class="dtl" >
+									<span th:if="${company.type} != null" th:text="${companyTypeMap[company.type]}"></span>
+								</div>
+							</div>
+							<div class="cl_wl">
+								<div class="tit">联系人</div>
+								<div class="dtl" th:text="${company.contacts}"></div>
+							</div>
+							<div class="cl_wl">
+								<div class="tit">联系电话</div>
+								<div class="dtl" th:text="${company.telPhone}"></div>
+							</div>
+							<div class="cl_wl">
+								<div class="tit">联系地址</div>
+								<div class="dtl" th:text="${company.address}"></div>
+							</div>
+							<div class="cl_wl">
+								<div class="tit">创建时间</div>
+								<div class="dtl"
+									 th:text="${#dates.format(company.createTime, 'yyyy-MM-dd HH:mm:ss')}"></div>
+							</div>
+							<div class="cl_wl">
+								<div class="tit">更新时间</div>
+								<div class="dtl"
+									 th:text="${#dates.format(company.updateTime, 'yyyy-MM-dd HH:mm:ss')}"></div>
+							</div>
+						</div>
+					</div>
+				</div>
+            </div>
+            <div class="pa_nav">
+				<ul class="nav">
+					<li role="presentation" class="active"><a href="#p_one"
+						aria-controls="p_one" role="tab" data-toggle="tab">附件信息</a></li>
+				</ul>
+			</div>
+		
+		<!--         详情头部信息end         -->
+		</div>
+	</div>
+	
+	<!-- 右下主体开始-->
+	<div class=" tab-content">
+         <div role="tabpanel" class="tab-pane active" id="p_one" >
+              <div class="wrapper">
+		           <div class="card-box">
+					<div class="card-box-top">
+						<span class="title">附件信息</span>
+						<div class="control-wrapper" style="float: right;margin-top: 10px;">
+							<button type="button" class="btn btn-primary" onclick="upload()">上传附件</button>
+						</div>
+					</div>
+					<div class="card-box-con">
+						<div class="table-responsive">
+						<table class="table ">
+							<thead>
+								<tr>
+									<th>上传时间</th>
+									<th>上传人</th>
+									<th>备注</th>
+									<th>文件名</th>
+								</tr>
+							</thead>
+							<tbody>
+								<tr th:each="file : ${fileList}">
+									<td th:text="${#dates.format(file.uploadTime, 'yyyy-MM-dd HH:mm:ss')}"></td>
+									<td th:text="${file.userName}"></td>
+									<td th:text="${file.memo}"></td>
+									<td><a th:text="${file.fileName}" th:onclick="|downloads(${file.id})|"></a></td>
+								</tr>
+							</tbody>
+						</table>
+					</div>
+					</div>
+				</div>
+	         </div>
+	     </div>
+	</div>
+	 <!--右下主体结束-->
+	 <!-- 附件上传弹出框 -->
+	<div class="modal fade" id="excelModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel">
+	  <div class="modal-dialog" role="document">
+	    <div class="modal-content">
+	      <div class="modal-header">
+	        <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+	        <h4 class="modal-title" id="myModalLabel">附件上传</h4>
+	      </div>
+	      <div class="modal-body">
+	        <form method="post" enctype="multipart/form-data" class="form-horizontal" id="uploadFileForm"  >
+				<div class="form-group">
+                     <label class="col-sm-3 control-label">备注</label>
+                     <div class="col-sm-6 control-wrapper">
+                    	 <textarea class="form-control" name="memo" rows="4" placeholder="请输入备注"></textarea>
+                    </div>	 
+	            </div>
+				<div class="form-group">
+					<label class="col-sm-3 control-label">导入文件</label>
+					<div class="col-sm-6 control-wrapper">
+						<input type="file" multiple class="form-control" id="file" name="file" style="height:39px;">
+						<span>(单个文件最大10MB,最大上传30MB)</span>
+					</div>
+				</div>
+			</form>
+	      </div>
+	      <div class="modal-footer">
+	        <button type="button" class="btn btn-default" data-dismiss="modal">取消</button>
+	        <button type="button" class="btn btn-primary" id="excelModalSubmit">提交</button>
+	      </div>
+	    </div>
+	  </div>
+	</div>
+	 
+	<script th:src="@{/js/plugins/validate/jquery.validate.min.js}"></script>
+	<script th:src="@{/js/plugins/validate/messages_zh.min.js}"></script>
+	<script th:inline="javascript">
+		data_menu="2_1";
+		
+		function upload(){
+			$('#excelModal').modal({
+	    		backdrop: 'static'
+	    	}) 
+		}
+		
+		//文件弹出框提交
+	    $("#excelModalSubmit").click(function(){
+	    	
+	    	var resultFlag = $("#uploadFileForm").valid();
+			if (!resultFlag) {
+				return;
+			}
+			var formData = new FormData();
+			var companyCode = [[${company.companyCode}]];
+			formData.append("companyCode", companyCode);
+			formData.append("memo", $("#excelModal [name=memo]").val());
+			var files = $("#file").get(0).files;
+			for(var i=0;i<files.length;i++){
+				formData.append("file", $("#file").get(0).files[i]);
+			}
+	    	$('#excelModal').modal('hide');	 
+	    	$("#excelModalSubmit").prop("disabled",true);
+	    	$.ajax({
+	            url: '/company/uploadFile',
+	            type: 'POST',
+	            data: formData,
+	            processData: false,
+	            contentType: false,
+	            error: function() {
+	            	layer.msg("操作失败", {icon : 2});
+	            	$("#excelModalSubmit").removeAttr("disabled");
+				},
+	            success : function(data) {
+	            	if(data == 'ok'){
+	            		layer.msg('成功！',{icon : 1}, function(){ 
+	            			window.location.reload();
+	            			});
+	            	}else{
+	            		layer.msg('失败！',{icon : 2});
+	            		$("#excelModalSubmit").removeAttr("disabled");
+	            	}
+	            }
+	        });
+	    })
+	    
+		 //下载文件
+	    function downloads(id){
+	    	window.location.href='/company/downloads?id='+id;
+		}
+		
+	    $("#uploadFileForm").validate(
+				{
+					onfocusout : function(element) {
+						$(element).valid();
+					},
+					ignore : "ignore",
+					rules : {
+						file:{
+							required:true,
+						}
+					},
+					messages : {
+						file:{
+							required:"请选择文件！",
+						}
+					},
+					highlight : function(element, errorClass,validClass) {
+						//打开高亮
+						$(element).parent().removeClass("has-success").addClass("has-error")
+					},
+					unhighlight : function(element, errorClass,validClass) {
+						//关闭高亮
+						$(element).parent().removeClass("has-error").addClass("has-success")
+					},
+					errorPlacement : function(error, element) {
+						error.appendTo(element.parent());
+					},
+					errorClass : "help-block",
+					errorElement : "div"
+				})
+	</script>
+</div>
+</html>

@@ -1,0 +1,215 @@
+<!DOCTYPE html>
+<html xmlns:layout="http://www.w3.org/1999/xhtml"
+	xmlns:th="http://www.w3.org/1999/xhtml"
+	layout:decorator="../layout/default"
+	xmlns:sec="http://www.thymeleaf.org/thymeleaf-extras-springsecurity4">
+<head>
+<meta charset="utf-8" />
+<title>账单详情</title>
+<style>
+</style>
+</head>
+
+<div layout:fragment="content">
+	<div class="row border-bottom">
+		<nav class="navbar navbar-static-top" role="navigation"
+			style="margin-bottom: 0" th:include="../layout/left :: right_head">
+		</nav>
+		<div class="pageheader">
+			<ol class="breadcrumb">
+				<li><a href="/">首页</a></li>
+				<li><a href="/bill/list">账单管理</a></li>
+				<li class="active">账单详情</li>
+			</ol>
+			<!-- 详情头部信息 -->
+			<div class="content pag_con">
+				<div class="row">
+					<div class="col-md-7">
+						<h1>
+							账单编号：<span th:text="${bill.billCode}"></span>
+						</h1>
+						<div class="row pag_c_l">
+							<div class="cl_wl">
+								<div class="tit">企业名称</div>
+								<div class="dtl" th:text="${bill.companyName}"></div>
+							</div>
+							<div class="cl_wl">
+								<div class="tit">账单时间</div>
+								<div class="dtl"
+									th:text="${#dates.format(bill.billDate, 'yyyy-MM-dd')}"></div>
+							</div>
+							<div class="cl_wl">
+								<div class="tit">账单金额</div>
+								<div class="dtl" th:text="${T(com.yjt.util.MoneyUtils).changeH2Y(bill.billAmount)}"></div>
+							</div>
+							<div class="cl_wl">
+								<div class="tit">账单币种</div>
+								<div class="dtl" th:text="${enumCurrencyMap[bill.billCurrency]}"></div>
+							</div>
+							<div class="cl_wl">
+								<div class="tit">备注</div>
+								<div class="dtl" th:text="${bill.billMemo}"></div>
+							</div>
+						</div>
+					</div>
+
+
+					<div class="pag_c_r">
+						<div class="r_but">
+							<button class="btn btn-primary" 
+							id="openCheckModal" >核对完成</button>
+						</div>
+						
+						<div class="r_row rtwo">
+							<div class="cl">
+								<span class="r_th">状态</span>
+							</div>
+							<div class="cl">
+								<h1>
+									<div>
+										<span th:text="${stateMap[bill.state]}"></span>
+									</div>
+								</h1>
+							</div>
+						</div>
+					</div>
+
+				</div>
+			</div>
+			<!--             详情头部信息end            -->
+
+			<div class="pa_nav">
+				<ul class="nav" role="tablist">
+					<li role="presentation" class="active"><a href="#p_one"
+						aria-controls="p_one" role="tab" data-toggle="tab">账单信息</a></li>
+				</ul>
+			</div>
+		</div>
+	</div>
+	<div class=" tab-content">
+		<!-- 右下主体开始-->
+		<div role="tabpanel" class="tab-pane active" id="p_one">
+			
+			<div class="wrapper">
+		           <div class="card-box">
+					<div class="card-box-top">
+						<span class="title">账单信息</span>
+					</div>
+					<div class="card-box-con">
+						<div class="table-responsive">
+						<form th:action="@{/bill/detail}" method="post" id="searchForm" class="form-horizontal search">
+						<table class="table ">
+							<thead>
+								<tr>
+									<th>创建时间</th>
+									<th>费用名称</th>
+									<th>金额</th>
+									<th>箱号</th>
+									<th>操作</th>
+								</tr>
+							</thead>
+							<tbody>
+								<tr th:each="billDetail : ${page.records}">
+									<td th:text="${#dates.format(billDetail.createTime, 'yyyy-MM-dd HH:mm:ss')}"></td>
+									<td th:text="${billDetail.costName}"></td>
+									<td >
+										<span th:text="${T(com.yjt.util.MoneyUtils).changeH2Y(billDetail.amount)}"></span>
+										<span th:text="${billDetail.currency}"></span>
+									</td>
+									<td th:text="${billDetail.boxCode}"></td>
+									<td></td>
+								</tr>
+							</tbody>
+						</table>
+						<div th:include="../layout/page :: page"></div>
+						</form>
+					</div>
+					</div>
+				</div>
+	         </div>
+			
+			
+		</div>
+		<!--右下主体结束-->
+	</div>
+
+	<!-- checkModal -->
+	<div class="modal fade" id="checkModal" tabindex="-1" role="dialog"
+		aria-labelledby="myModalLabel">
+		<div class="modal-dialog" role="document">
+			<div class="modal-content">
+				<div class="modal-header">
+					<button type="button" class="close" data-dismiss="modal"
+						aria-label="Close">
+						<span aria-hidden="true">&times;</span>
+					</button>
+					<h4 class="modal-title" id="myModalLabel">对账审核</h4>
+				</div>
+				<div class="modal-body">
+					<form method="post" class="form-horizontal" id="checkForm">
+						<input type="hidden" name="id" th:value="${bill.id}" />
+						<input type="hidden" name="state" value="1" />
+
+						<div class="form-group">
+							<label class="col-sm-3 control-label">备注</label>
+							<div class="col-sm-6 control-wrapper">
+								<textarea class="form-control" name="billMemo" rows="4"
+									placeholder="请输入备注"></textarea>
+							</div>
+						</div>
+
+					</form>
+				</div>
+				<div class="modal-footer">
+					<button type="button" class="btn btn-default" data-dismiss="modal">取消</button>
+					<button type="button" class="btn btn-primary" id="checkModalSubmit">提交</button>
+				</div>
+			</div>
+		</div>
+	</div>
+
+	<!-- feeModel end -->
+	<!--右侧部分结束-->
+	<script th:src="@{/js/plugins/validate/jquery.validate.min.js}"></script>
+	<script th:src="@{/js/plugins/validate/messages_zh.min.js}"></script>
+	<script th:inline="javascript">
+		data_menu = "4_1";
+
+		$("#openCheckModal").click(function() {
+			//显示checkmodel
+			$('#checkModal').modal({
+				backdrop : 'static'
+			});
+
+		})
+		
+		$("#checkModalSubmit").click(function() {
+
+			$('#checkModal').modal('hide');
+			$.ajax({
+				url : '/bill/check',
+				type : 'POST',
+				data : $("#checkForm").serialize(),
+				error : function() {
+					layer.msg("操作失败", {
+						icon : 2, time:1000
+					});
+				},
+				success : function(data) {
+					if (data.code == 200) {
+						layer.msg(data.message, {
+							icon : 1, time:1000
+						}, function() {
+							window.location.reload();
+						});
+					} else {
+						layer.msg(data.message, {
+							icon : 2, time:1000
+						});
+					}
+				}
+			});
+		}) 
+	</script>
+</div>
+</html>

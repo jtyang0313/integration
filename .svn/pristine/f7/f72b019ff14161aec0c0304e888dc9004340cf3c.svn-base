@@ -1,0 +1,60 @@
+/*订单管理*/
+    /*  详情  */
+table.table>tbody>tr>td,table.table>thead>tr>th{overflow:hidden;text-overflow:ellipsis;white-space:nowrap;}
+.inmodal .modal-body{margin:auto;}
+.modal .modal-footer{padding:20px 0;}
+@media only screen and (max-width:1320px) {
+    table.table>tbody>tr>td{font-size:12px;}
+    
+    } 
+/*订单详情*/
+.collapse.in{background:#fff;box-shadow:none;}
+.xq_tb{padding:0 15px;}
+.xq_tb .tb_li{padding:8px;}
+.panel-default .xq_tb .tb_li .detail{color:#999;font-weight:400;display:inline-flex;}
+.panel-default .xq_tb .tb_li .term{display:inline-flex;}
+.xq_tb .tb_li .term:after{content:":";display:inline-flex;padding:0 2px;}
+.btn-primary.btn-outline {
+    color: #40A9FF;
+}
+.lct_box .ib_tit h5{font-size:14px;}
+.lct_box .ib_tit{border-bottom:1px solid #eee;background-color:#fff;padding:14px 15px 7px;min-height:48px;}
+.hr_b{height:1px;background:#eee;position:relative;margin-top:-5px;}
+    	.pageheader .h span{font-size:14px;color:#888;font-weight:400;}
+        .pageheader .h span.text-danger{color:#1890ff;}
+        .lct_box .lct_top{padding-bottom:6px;}
+        .lct_box .lct_top .nav_t .l1{float:left;margin:0px 10px 0px 8px;font-size:18px;}
+        .lct_box .lct_top .nav_t .l1 .fa{color:#3a20ff;}
+        .lct_box .lct_top .nav_t .l2{float:left;}
+        .lct_box .lct_top .nav_t .mal_h3{font-size:21px;font-weight:200;font-family:auto;}
+        .lct_dis{padding-top:20px;}
+        .lct_dis .dis_con{box-sizing:border-box;margin:0;padding:0;color:rgba(0,0,0,.65);font-size:14px;font-variant:tabular-nums;line-height:1.5;list-style:none;font-feature-settings:"tnum";display:flex;width:100%;font-size:0}
+        .lct_dis .dis_con .lis-item{position:relative;display:inline-block;flex:1 1;overflow:visible;vertical-align:top;}
+        .lct_dis .dis_con .lis-item .l_item_tit{position:absolute;display:inline-block;color: rgba(0,0,0,.65);font-size:14px;line-height:32px;top:-32px;left:0;text-align:center;width:140px;}
+        .lct_dis .dis_con .l_item_tit a{color:#999;}
+        .lct_dis .dis_con .lis_item_p .l_item_tit a{color:#222;}
+        .lct_dis .dis_con .lis-item .l_time{color:rgba(0,0,0,.45);font-size:14px;}
+        .lct_dis .dis_con .lis-item .l_item_con{display:block;width:140px;margin-top:8px;text-align:center;}
+        .lct_dis .dis_con .lis-item .l_item_tail{position:absolute;left:0;top:2px;width:100%;margin:0 0 0 70px;padding:0;}
+        .dis_con .lis-item .l_item_tail:after,.lct_dis .dis_con .lis_item_p>.l_item_tail:after{background-color: #e8e8e8;}
+            .dis_conl .lis-item .l_item_tail:after{width:calc(100% - 20px);}
+        .lis-item .l_item_tail:after{height:3px;margin-left:12px;display:inline-block;width:100%;background: #e8e8e8;border-radius:1px;transition:background .3s;content: "";}
+        .lct_dis .dis_con .lis-item .l_item_icon{width:8px;height:8px;margin-left: 67px;padding-right: 0;line-height: 8px;background: transparent;border: 0;}
+        .lct_dis .dis_con .lis_item_f .l_item_icon{color: #1890ff;}
+        
+        .lct_dis .dis_con .lis-item .l_item_icon .fa{position:relative;float:left;width:100%;height:100%;border-radius:100px;transition:all .3s;background:rgba(0,0,0,.1);}
+        .lct_dis .dis_con .lis_item_f .l_item_icon .fa{background:#1890ff;}
+        .dis_con .lis_item_f .l_item_tail:after{background-color:#1890ff;}
+        .lct_dis .dis_con .lis_item_p .fa{font-size:14px;line-height:8px;}
+        .lct_dis .dis_con .lis-item:last-child{flex: none;}
+        .lct_dis .dis_con .lis-item:last-child .l_item_tail,.lct_dis .dis_con .lis_item:last-child .l_item_tit:after{display:none;}
+
+.ib_nav2 .nav-tabs{border:none;}
+.ib_nav2 .nav-tabs>li>a h5{font-weight:200;color:#666;}
+.ib_nav2 .nav-tabs>li.active>a h5,.ib_nav2 .nav-tabs>li.active>a h5:focus,.ib_nav2 .nav-tabs>li.active>a h5:hover{color:#1890ff;}
+.ib_nav2 .nav-tabs>li.active>a,.ib_nav2 .nav-tabs>li a{border:none;}
+.ib_nav2 .nav-tabs>li.active>a,.ib_nav2 .nav-tabs>li:hover a,.ib_nav2 .nav-tabs>li.active>a,.ib_nav2 .nav-tabs>li.active>a:focus,.ib_nav2 .nav-tabs>li.active>a:hover{border:none;color:#1890ff;background:none;}
+.ib_nav2 .nav-tabs li.active{border-bottom:2px solid #1890ff;position:relative;margin-top:0;}
+.ib_nav2 .nav-tabs li.active h5{font-weight:bold;}
+.ib_nav2 .nav-tabs li a{height:44px;padding:12px 15px;}
+

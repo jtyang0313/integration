@@ -1,0 +1,880 @@
+<!DOCTYPE html>
+<html xmlns:layout="http://www.w3.org/1999/xhtml"
+	xmlns:th="http://www.w3.org/1999/xhtml"
+	layout:decorator="../layout/default"
+	xmlns:sec="http://www.thymeleaf.org/thymeleaf-extras-springsecurity4">
+<head>
+<meta charset="utf-8" />
+<title>对账单详情</title>
+<style>
+.mod_box .bg_col {
+	padding: 2px 0;
+	margin-bottom: 14px;
+	background-color: #dff0d8;
+	border: 1px solid #e1e1e8;
+	border-radius: 4px;
+}
+
+.t_lab {
+	display: block;
+	padding: 10px 15px;
+	overflow: hidden;
+}
+
+.t_lab label {
+	float: left;
+	width: 80px;
+	text-align: right;
+	margin: auto;
+}
+
+.t_lab label:after {
+	content: ":";
+	margin: auto 3px;
+}
+
+.t_lab .lab_con {
+	font-size: 14px;
+	margin-right: 25px;
+	float: left;
+	font-family: none;
+}
+
+.mod_box .span_h {
+	position: relative;
+	color: #999;
+	font-size: 12px;
+	margin-left: 3px;
+	padding-left: 3px;
+	line-height: 22px;
+	border-left: 1px solid #cdcdcd;
+}
+
+.pag_c_l .cl_wl dl {
+	margin: auto;
+	padding: 0;
+	display: inline-block;
+}
+
+.pag_c_l .cl_wl dd {
+	float: left;
+	margin-right: 5px;
+}
+
+.rel_box {
+	overflow: hidden;
+	font-family: auto;
+}
+
+.rel_ul {
+	float: left;
+	width: 100%;
+	text-align: center;
+	margin: auto;
+	padding: 0;
+}
+
+.rel_ul>li {
+	width: 100%;
+	margin-top: 6px;
+	float: left;
+	margin: 0 auto;
+	padding: 0 5px;
+	list-style: none;
+}
+
+.rel_ul>li .d_span {
+	display: inline-block;
+	float: left;
+	padding: 5px 5px 5px 35px;
+	line-height: 36px;
+	text-align: left;
+}
+
+.rel_ul>li:first-child {
+	background: #A9DDF3;
+}
+
+.rel_ul .num1 {
+	width: 17%;
+}
+
+.rel_ul li.rel .num1 {
+	line-height: 18px;
+}
+
+.rel_ul .num2 {
+	width: 18%;
+	position: relative;
+}
+
+.rel_ul .num3 {
+	width:20%;
+}
+
+.rel_ul .num4 {
+	width: 15%;
+}
+
+.rel_ul .num5 {
+	width: 15%;
+}
+.rel_ul .num5 {
+	width: 15%;
+}
+.rel_ul li.rel small {
+	display: block;
+	color: #999;
+}
+
+.rel_ul li:nth-child(even) {
+	background: #E8EDF1;
+}
+
+.rel_ul li:nth-child(odd) {
+	background: #fff;
+}
+
+.rel_ul li.l_th {
+	background: #fdfdfd;
+	border-bottom: 1px solid #ddd;
+	border-top: 1px solid #ddd;
+}
+
+.rel_ul li.rel {
+	margin-top: 6px;
+	background: #f1f9fe;
+	border: 1px solid #bce8f1;
+	border-radius: 4px;
+	padding: 0;
+}
+
+.rel_ul li.rel dl {
+	margin: auto;
+	padding: 0;
+}
+
+.rel_ul li.rel dd {
+	overflow: hidden;
+	padding: 5px;
+	height: 56px;
+	margin-bottom: auto;
+	position: relative;
+}
+
+.rel_ul li.rel dd .num2 .small {
+	float: none;
+	padding: 0 5px;
+	color: #666;
+}
+
+.rel_ul li.rel dd.alert .num2 .small {
+	color: #999;
+}
+
+.rel_ul li dd.alert .close {
+	top: 5px;
+	right: 12px;
+}
+
+.rel_ul li.rel dd.alert {
+	margin-bottom: 9px;
+	background: #ffffffb8
+}
+
+.rel_ul li.rel dd.alert:first-child {
+	margin-top: auto;
+}
+
+.rel_ul li.rel .alert .num3 .there_num {
+	color: #34c16a;
+	float: left;
+	margin: auto 15px auto auto;
+}
+
+.rel_ul li.al {
+	margin-top: 6px;
+	background: #fef1f1;
+	border: 1px solid #f1bcbc;
+}
+
+.rel_ul li.al .alert .num3 .there_num {
+	color: #c13434;
+}
+
+/* .rel_ul .alert .num5 a {
+	color: #999;
+} */
+
+.rel_ul .fa_ex {
+	position: absolute;
+	width: 0;
+	left: 15px;
+	top: 18px;
+	color: #c13434;
+}
+
+.rel_ul .fa_sho {
+	position: absolute;
+	text-align: center;
+	width: 20px;
+	height: 20px;
+	left: 0;
+	top: 13px;
+	color: #fff;
+	background: #ffb51e;
+	line-height: 18px;
+	font-size: 13sspx;
+	border-radius: 18px;
+	font-style: normal;
+}
+
+.rel_ul .mr12 {
+	margin-right: 12px;
+}
+</style>
+</head>
+
+<div layout:fragment="content">
+	<div class="row border-bottom">
+		<nav class="navbar navbar-static-top" role="navigation"
+			style="margin-bottom: 0" th:include="../layout/left :: right_head">
+		</nav>
+		<div class="pageheader">
+			<ol class="breadcrumb">
+				<li><a href="/">首页</a></li>
+				<li><a href="/agentBill/list">对账管理</a></li>
+				<li class="active">对账详情</li>
+			</ol>
+			<!-- 详情头部信息 -->
+			<div class="content pag_con">
+				<div class="row">
+					<div class="col-md-7">
+						<h1>
+							账单号：<span th:text="${agentBill.billCode}"></span>
+						</h1>
+						<div class="row pag_c_l">
+							<div class="cl_wl">
+								<div class="tit">企业名称</div>
+								<div class="dtl" th:text="${agentBill.companyName}"></div>
+							</div>
+							<div class="cl_wl">
+								<div class="tit">账单时间</div>
+								<div class="dtl"
+									th:text="${#dates.format(agentBill.billDate, 'yyyy-MM-dd')}"></div>
+							</div>
+							<div class="cl_wl">
+								<div class="tit">账单金额</div>
+								<div class="dtl" th:text="${#moneyUtils.changeH2Y(agentBill.billAmount)}"></div>
+							</div>
+							<div class="cl_wl">
+								<div class="tit">账单币种</div>
+								<div class="dtl" th:text="${enumCurrencyMap[agentBill.billCurrency]}"></div>
+							</div>
+							<div class="cl_wl">
+								<div class="tit">备注</div>
+								<div class="dtl" th:text="${agentBill.billMemo}"></div>
+							</div>
+						</div>
+					</div>
+
+
+					<div class="pag_c_r">
+						<div class="r_but">
+							<button sec:authorize="hasAuthority('dz_verify')" class="btn btn-primary" 
+							id="openCheckModal" th:if="${agentBill.state==0}">核对完成</button>
+						</div>
+						
+						<div class="r_row rtwo">
+							<div class="cl">
+								<span class="r_th">状态</span>
+							</div>
+							<div class="cl">
+								<h1>
+									<div>
+										<span th:text="${stateMap[agentBill.state]}"></span>
+									</div>
+								</h1>
+							</div>
+						</div>
+					</div>
+
+				</div>
+			</div>
+			<!--             详情头部信息end            -->
+
+			<div class="pa_nav">
+				<ul class="nav" role="tablist">
+					<li role="presentation" class="active"><a href="#p_one"
+						aria-controls="p_one" role="tab" data-toggle="tab">对账信息</a></li>
+					<li role="presentation"><a href="#p_two" aria-controls="p_two"
+						role="tab" data-toggle="tab">费用信息</a></li>
+				</ul>
+			</div>
+		</div>
+	</div>
+	<div class=" tab-content">
+		<!-- 右下主体开始-->
+		<div role="tabpanel" class="tab-pane active" id="p_one">
+			<div class="wrapper animated fadeInRight">
+				<div class="card-box">
+					<div class="ibox-content">
+					<form th:action="@{/agentBill/detail}" method="post" id="searchForm" class="form-horizontal search">
+						<input type="hidden" name="id" th:value="${agentBill.id}"/>
+						<div class="table rel_box">
+							<ul class="rel_ul">
+								<li class="l_th"><span class="d_span num1">创建时间</span> 
+									<span class="d_span num2">费用名称</span> 
+									<span class="d_span num3">金额</span>
+									<span class="d_span num4">箱号</span>
+									<span class="d_span num4">状态</span>
+									<span class="d_span num5">操作</span>
+								</li>
+								<li th:class="${detail.flag}?'rel':'rel al'"
+									th:each="detail:${page.records}">
+									<dl>
+										<dd>
+											<span class="fa_ex" th:if="${!detail.flag}"><i
+												class="fa fa-exclamation-triangle" aria-hidden="true"></i>
+											</span> 
+											<span class="d_span num1" th:if="${detail.createTime!=null}">
+												<span th:text="${#dates.format(detail.createTime, 'yyyy-MM-dd')}"></span>
+												<small th:text="${#dates.format(detail.createTime, 'HH:mm:ss')}"></small>
+											</span>
+											<span class="d_span num2" th:text="${detail.costName}"></span>
+											<span class="d_span num3">
+												<span th:text="${#moneyUtils.changeH2Y(detail.amount)}"></span>
+												<span th:text="${enumCurrencyMap[detail.currency]}"></span>
+												<span th:text="${detail.currency}" style="display:none"></span>
+											</span>
+											<span class="d_span num4" th:text="${detail.boxCode}"></span>
+											<span class="d_span num4"  th:if="${detail.billDetailList.size()}==0">未对账</span>
+											<span class="d_span num4"  th:if="${detail.billDetailList.size()}>0" th:text="${billDzMap[detail.billDetailList[0].dzStatus]}"></span>
+											<span class="d_span num5">
+												<a th:if="${detail.dzSign == null}" href="#" class="mr12"
+												th:onclick="|check(this, ${detail.id})|" 
+												sec:authorize="hasAuthority('dz_verify')">核对</a>
+												<a href="#" th:if="${detail.billDetailList.size()==0}" class="openFeeModel" 
+												 sec:authorize="hasAuthority('dz_add_fee')">添加收费</a>
+												<a href="#" th:if="${detail.billDetailList.size()>0} and ${!detail.flag} and ${detail.billDetailList[0].dzStatus==0}"
+												 class="openFeeModel" sec:authorize="hasAuthority('dz_add_fee')">添加收费</a>
+											</span>
+										</dd>
+										<dd class="alert alert-dismissible" role="alert"
+											th:each="billDetail:${detail.billDetailList}">
+											<span class="d_span num1"
+												th:if="${billDetail.createTime!=null}"> <span
+												th:text="${#dates.format(billDetail.createTime, 'yyyy-MM-dd')}"></span>
+												<small
+												th:text="${#dates.format(billDetail.createTime, 'HH:mm:ss')}"></small>
+											</span> <span class="d_span num2"><span
+												th:text="${billDetail.costName}"></span></span> <span
+												class="d_span num3"> <span class="there_num"
+												th:text="${#moneyUtils.changeH2Y(billDetail.billFee)}"></span>
+												<span class="there_num" th:text="${enumCurrencyMap[billDetail.billCurrency]}"></span>
+											</span> <span class="d_span num4" th:text="${billDetail.boxCode}"></span>
+											<span class="d_span num4" ></span>
+											<span class="d_span num5">
+												
+												<input th:if="${billDetail.dzStatus} == 0" type="checkbox" name="verify" th:value="${billDetail.id}"/>
+											</span>
+										</dd>
+									</dl>
+								</li>
+							</ul>
+						</div>
+						<div th:include="../layout/page :: page"></div>
+						</form>
+					</div>
+				</div>
+			</div>
+		</div>
+
+		<!-- 费用信息 -->
+		<div role="tabpanel" class="tab-pane" id="p_two">
+			<div class="wrapper animated fadeInRight">
+				<div class="card-box">
+					<div class="card-box-top">
+						<span class="title">费用信息</span>
+					</div>
+					<div class="card-box-con">
+						<div class="ibox-content" style="padding: 0; margin-top: auto;">
+							<form method="post" th:action="@{/line/list}"
+								class="form-horizontal search" >
+								<div class="table-responsive">
+									<table class="table ">
+										<thead>
+											<tr>
+												<th>序号</th>
+												<th>费用名称</th>
+												<th>应收</th>
+												<th>应收企业</th>
+												<th>应付</th>
+												<th>应付企业</th>
+												<th>备注</th>
+												<th>创建时间</th>
+												<th>创建人</th>
+											</tr>
+										</thead>
+										<tbody>
+											<tr th:each="extra,iterStat : ${extraList}">
+												<td th:text="${iterStat.index}+1"></td>
+												<td th:text="${extra.costName}"></td>
+												<td><span th:if="${extra.shou} != null"
+													th:text="${extra.shouCurrency}+' '+${#moneyUtils.changeH2Y(extra.shou)}"></span>
+												</td>
+												<td th:text="${extra.shouCompanyName}"></td>
+												<td><span th:if="${extra.fu} != null"
+													th:text="${extra.fuCurrency}+' '+${#moneyUtils.changeH2Y(extra.fu)}"></span>
+												</td>
+												<td th:text="${extra.fuCompanyName}"></td>
+												<td th:text="${extra.remark}"></td>
+												<td th:if="${extra.createTime != null}"
+													th:text="${#dates.format(extra.createTime, 'yyyy-MM-dd HH:mm:ss')}"></td>
+												<td th:text="${extra.createName}"></td>
+											</tr>
+										</tbody>
+									</table>
+								</div>
+							</form>
+						</div>
+					</div>
+				</div>
+			</div>
+		</div>
+		<!--右下主体结束-->
+	</div>
+
+	<!-- checkModal -->
+	<div class="modal fade" id="checkModal" tabindex="-1" role="dialog"
+		aria-labelledby="myModalLabel">
+		<div class="modal-dialog" role="document">
+			<div class="modal-content">
+				<div class="modal-header">
+					<button type="button" class="close" data-dismiss="modal"
+						aria-label="Close">
+						<span aria-hidden="true">&times;</span>
+					</button>
+					<h4 class="modal-title" id="myModalLabel">对账审核</h4>
+				</div>
+				<div class="modal-body">
+					<form method="post" class="form-horizontal" id="checkForm">
+						<input type="hidden" name="billCode" th:value="${agentBill.billCode}" />
+						<input type="hidden" name="payBillCode" th:value="${agentBill.payBillCode}" />
+						<input type="hidden" name="companyCode" th:value="${agentBill.companyCode}" />
+						<input type="hidden" name="companyName" th:value="${agentBill.companyName}" />
+						<input type="hidden" name="billCurrency" th:value="${agentBill.billCurrency}" />
+						<input type="hidden" name="id" th:value="${agentBill.id}" />
+						<input type="hidden" name="state" value="1" />
+
+						<div class="form-group">
+							<label class="col-sm-3 control-label">备注</label>
+							<div class="col-sm-6 control-wrapper">
+								<textarea class="form-control" name="billMemo" rows="4"
+									placeholder="请输入备注"></textarea>
+							</div>
+						</div>
+
+					</form>
+				</div>
+				<div class="modal-footer">
+					<button type="button" class="btn btn-default" data-dismiss="modal">取消</button>
+					<button type="button" class="btn btn-primary" id="checkModalSubmit">提交</button>
+				</div>
+			</div>
+		</div>
+	</div>
+	<!-- checkmodelEnd -->
+
+	<!-- feeModel start -->
+	<div class="modal inmodal" id="feeModal" tabindex="-1" role="dialog"
+		aria-hidden="true">
+		<div class="modal-dialog modal-lg">
+			<div class="modal-content animated bounceInRight">
+				<div class="la_fy">
+					<div class="modal-body ibox float-e-margins">
+						<div class="ibox-title">
+							<h5>费用录入</h5>
+							<div class="ibox-tools">
+								<button type="button" class="close" data-dismiss="modal">
+									<span aria-hidden="true">×</span><span class="sr-only">关闭</span>
+								</button>
+							</div>
+						</div>
+						<div class="ibox-content">
+							<form class="form-horizontal m-t-md" id="feeForm" method="post">
+								
+								<input id="billCode" name="billCode" type="hidden" th:value="${agentBill.billCode}">
+								<input id="boxCode" name="boxCode" type="hidden">
+								<div class="form-group">
+									<label class="col-sm-2 col-sm-2 control-label">费用名称</label>
+									<div class="col-sm-8">
+										<input class="form-control" id="costName" name="costName" readonly/>
+									</div>
+								</div>
+								<div class="form-group">
+									<label class="col-sm-2 col-sm-2 control-label" id="companyLab">应收企业</label>
+									<div class="col-sm-8">
+										<select class="form-control" id="shouCompanyCode"
+											name="shouCompanyCode">
+											<option value="">全部</option>
+										</select>
+									</div>
+								</div>
+
+								<div class="form-group">
+									<label class="col-sm-2 col-sm-2 control-label">应收金额</label>
+									<div class="col-sm-8">
+										<div class="col-sm-3" style="padding: 0">
+											<select class="form-control" id="shouCurrency"
+												name="shouCurrency">
+												<option value="">全部</option>
+
+											</select>
+										</div>
+										<div class="col-sm-9" style="padding-right: 0">
+											<input class="form-control" type="text" aria-required="true"
+												aria-invalid="false" name="shouStr" id="shouStr"
+												placeholder="请输入金额">
+										</div>
+									</div>
+								</div>
+
+								<div class="form-group">
+									<label class="col-sm-2 col-sm-2 control-label" id="companyLab">应付企业</label>
+									<div class="col-sm-8">
+										<input class="form-control" id="fuCompanyCode" name="fuCompanyCode" readonly/>
+									</div>
+								</div>
+
+								<div class="form-group">
+									<label class="col-sm-2 col-sm-2 control-label">应付金额</label>
+									<div class="col-sm-8">
+										<div class="col-sm-3" style="padding: 0">
+											<input class="form-control" id="fuCurrency2" name="fuCurrency2" readonly/>
+											<input type="hidden" class="form-control" id="fuCurrency" name="fuCurrency"/>
+										</div>
+										<div class="col-sm-9" style="padding-right: 0">
+											<input class="form-control" type="text" aria-required="true"
+												aria-invalid="false" name="fuStr" id="fuStr" 
+												placeholder="请输入金额">
+										</div>
+									</div>
+								</div>
+
+								<div class="form-group">
+									<label class="col-sm-2 col-sm-2 control-label">备注</label>
+									<div class="col-sm-8">
+										<textarea class="form-control" aria-required="true"
+											aria-invalid="false" name="remark" id="remark"
+											placeholder="请输入备注"></textarea>
+									</div>
+								</div>
+							</form>
+						</div>
+					</div>
+				</div>
+				<div class="modal-footer" style="text-align: center;">
+					<button type="button" class="btn btn-white" data-dismiss="modal">关闭</button>
+					<button class="btn btn-primary" type="button" id="feeSubmit">保存</button>
+				</div>
+			</div>
+			<small class="font-bold"></small>
+		</div>
+		<small class="font-bold"></small>
+	</div>
+	<!-- feeModel end -->
+	<!--右侧部分结束-->
+	<script th:src="@{/js/plugins/validate/jquery.validate.min.js}"></script>
+	<script th:src="@{/js/plugins/validate/messages_zh.min.js}"></script>
+	<script th:inline="javascript">
+		data_menu = "7_4";
+
+		function check(thisObj, agentId) {
+			
+			//有勾选的，先核对勾选的明细；
+			var checks = $(thisObj).parent().parent().parent().find("input[name=verify]:checked");
+			//var bool = $(thisObj).next().prop("checked");
+			if(checks.length == 0){
+				layer.msg("请先勾选的账单",{icon:2, time:1000});
+				return ;
+			}
+			
+			layer.confirm('您确定进行核对吗？', {
+				icon : 3,
+				btn : [ '确定', '取消' ]
+			}, function() {
+				if(!$(thisObj).hasClass("click")){
+					$(thisObj).addClass("click");	
+				}
+				else{
+					layer.msg("请勿重复点击！",{icon:4, time:1000});
+					return true;
+				}
+				//若勾选，则参数传一个idList；
+				var idList = new Array();
+				
+				checks.each(function(){
+					idList.push($(this).val());
+				});
+				
+				console.log(idList);
+				var idListstr = JSON.stringify(idList);
+				$.ajax({
+					url : '/agentBill/check?idListStr=' + idListstr + '&agentId='+agentId,
+					type : 'POST',
+					error : function() {
+						layer.msg("操作失败", {
+							icon : 2, time:1000
+						});
+					},
+					success : function(data) {
+						if (data.code == 200) {
+							layer.msg(data.message, {icon : 1, time:1000}, function() {
+								window.location.reload();
+							});
+						} else {
+							layer.msg(data.message, {icon : 2, time:2000}, function() {
+								$(thisObj).removeClass("click");
+							});
+						}
+					}
+				});
+			})
+			
+		}
+		
+		$("#checkModalSubmit").click(function() {
+
+			/* var resultFlag = $("#checkForm").valid();
+			if (!resultFlag) {
+				return;
+			} */
+
+			$('#checkModal').modal('hide');
+			
+			$.ajax({
+				url : '/agentBill/checkBill',
+				type : 'POST',
+				data : $("#checkForm").serialize(),
+				error : function() {
+					layer.msg("操作失败", {
+						icon : 2, time:1000
+					});
+				},
+				success : function(data) {
+					if (data.code == 200) {
+						layer.msg(data.message, {
+							icon : 1, time:1000
+						}, function() {
+							window.location.reload();
+						});
+					} else {
+						layer.msg(data.message, {
+							icon : 2, time:1000
+						});
+					}
+				}
+			});
+		}) 
+
+		$(".openFeeModel").click(function() {
+					
+			var costName = $(this).parent().parent().find("span.d_span:eq(1)").text();
+			var fee = $(this).parent().parent().find("span.d_span:eq(2)").find("span:eq(0)").text();
+			var current = $(this).parent().parent().find("span.d_span:eq(2)").find("span:eq(1)").text();
+			var currentVal = $(this).parent().parent().find("span.d_span:eq(2)").find("span:eq(2)").text();
+			var boxCode = $(this).parent().parent().find("span.d_span:eq(3)").text();
+			$("#fuCurrency").val(currentVal);
+			$("#fuCurrency2").val(current);
+			$("#fuStr").val(fee);
+			$("#fuCompanyCode").val([[${agentBill.companyName}]]);
+			$('#boxCode').val(boxCode);
+			$('#costName').val(costName);
+			
+			$.ajax({
+				url : '/agentBill/getNameList',
+				type : 'POST',
+				dataType:"JSON",
+				error : function() {
+					layer.msg("操作失败", {
+						icon : 2, time:1000
+					});
+				},
+				success : function(data) {
+
+					$("#shouCurrency option[value != '']").remove(); //删除Select中value不为0的Option
+					$.each(data["currencyList"], function(value,name) {
+						$("#shouCurrency").append(
+								"<option value='"+value+"'>"+name + "</option>");
+					});
+					
+					$("#shouCompanyCode option[value != '']").remove(); //删除Select中value不为0的Option
+					$.each(data["companyList"], function(i, item) {
+						$("#shouCompanyCode").append(
+								"<option value='"+item.companyCode+"'>"+ item.companyName+ "</option>");
+					});
+					
+				}
+			});
+
+			$('#feeModal').modal({
+				backdrop : 'static'
+			})
+
+		})
+
+		$("#feeSubmit").click(function() {
+
+			feeValid();
+			
+			var resultFlag = $("#feeForm").valid();
+			if(!resultFlag){
+				return;
+			}
+			
+			$('#feeModal').modal('hide');
+			
+			$("#fuCompanyCode").val([[${agentBill.companyCode}]]);
+			$.ajax({
+				url : '/agentBill/addFee',
+				type : 'POST',
+				data : $("#feeForm").serialize(),
+				error : function() {
+					layer.msg("操作失败", {
+						icon : 2, time:1000
+					});
+				},
+				success : function(data) {
+					if (data.code == 200) {
+						layer.msg(data.message, {
+							icon : 1, time:1000
+						}, function() {
+							window.location.reload();
+						});
+					} else {
+						layer.msg(data.message, {
+							icon : 2, time:2000
+						});
+					}
+				}
+			});
+		})
+		
+		//添加费用表单验证，不是必填
+		function feeValid(){
+			var shouCompanyCode = $("#shouCompanyCode").val();
+			var shouCurrency = $("#shouCurrency").val();
+			var shouStr = $("#shouStr").val();
+			var flag = shouCompanyCode != '' || shouCurrency!='' || shouStr.trim()!='';
+				
+			$("#feeForm").validate({
+				onfocusout : function(element) {
+					$(element).valid();
+				},
+				ignore : "ignore",
+				rules : {
+					shouCompanyCode:{
+						required:function(){
+							if(flag){
+							    return true;
+							}else{
+								return false;
+							}
+						}
+					},
+					shouStr:{
+						required:function(){
+							if(flag){
+							    return true;
+							}else{
+								return false;
+							}
+						},
+						number:true,
+						min:0
+					},
+					shouCurrency:{
+						required:function(){
+							if(flag){
+							    return true;
+							}else{
+								return false;
+							}
+						}
+					},
+					fuStr:{
+						required:true,
+						number:true,
+						min:0
+					}
+				},
+				messages : {
+					shouCompanyCode:{
+						required:"请选择应收企业"
+					},
+					shouStr:{
+						required:"请填写应收金额",
+						digits:"请输入数字",
+						min:"最小值不能小于0"
+					},
+					shouCurrency:{
+						required:"请选择币种"
+					},
+					fuStr:{
+						required:"请填写应付金额",
+						digits:"请输入数字",
+						min:"最小值不能小于0"
+					}
+				},
+				highlight : function(element, errorClass, validClass) {
+					$(element).parent().removeClass("has-success").addClass("has-error")
+				},
+				unhighlight : function(element, errorClass, validClass) {
+					$(element).parent().removeClass("has-error").addClass("has-success")
+				},
+				errorPlacement : function(error, element) {
+					error.appendTo(element.parent());
+				},
+				errorClass : "help-block",
+				errorElement : "div"
+			});
+		}
+		
+		$("#openCheckModal").click(function() {
+
+			//若有红框不能提交
+			var a = $("li.rel.al").length;
+			if (a > 0) {
+				layer.msg("对账信息有误，不能核对！", {
+					icon : 2, time:2000
+				});
+				return;
+			}
+			//若有未匹配完成不能提交
+			var list = [[${agentBillDetailList}]];
+			var flag = true;
+			for(var i=0;i<list.length;i++){
+				if(list[i].dzSign == null){
+					flag = false;
+					break;
+				}
+			}
+			
+			if(!flag){
+				layer.msg("对账明细未匹配完成，不能核对！", {
+					icon : 2, time:2000
+				});
+				return;
+			}
+			
+			//显示checkmodel
+			$('#checkModal').modal({
+				backdrop : 'static'
+			});
+
+		})
+
+	</script>
+</div>
+</html>

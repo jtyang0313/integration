@@ -1,0 +1,10 @@
+package com.yjt.entity.factory;
+
+public class FactoryTest {
+
+	public static void main(String[] args){
+		Store nyPizzaStore = new NYPizzaStore();
+		Pizza nypizza = nyPizzaStore.createPizza("cheese");
+		nypizza.print();
+	}
+}

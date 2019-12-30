@@ -1,0 +1,319 @@
+<!DOCTYPE html>
+<html xmlns:layout="http://www.w3.org/1999/xhtml"
+	xmlns:th="http://www.w3.org/1999/xhtml"
+	layout:decorator="../layout/default"
+	xmlns:sec="http://www.thymeleaf.org/thymeleaf-extras-springsecurity4">
+<head>
+	<title>编辑权限</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+	<meta http-equiv="Content-Type" content="text/html; charset=utf-8"> 
+	<!--bootstrap基础引用 start-->
+	<script type="text/javascript" th:src="@{/public/bootstrap/jquery-3.1.1.min.js}"></script>
+	<script type="text/javascript" th:src="@{/public/bootstrap/bootstrap.min.js}"></script>
+	<!--bootstrap基础引用 end-->
+	<!--bootstrap-treeview start-->
+	<link rel="stylesheet" type="text/css" th:href="@{/js/plugins/bootstrap-treeview/bootstrap-treeview.min.css}">
+	<script type="text/javascript" th:src="@{/js/plugins/bootstrap-treeview/bootstrap-treeview.js}"></script>
+	<!--bootstrap-treeview end-->
+	<!--bootstrap-dialog start-->
+	<link rel="stylesheet" type="text/css" th:href="@{/js/plugins/bootstrap-dialog/bootstrap-dialog.min.css}">
+	<script type="text/javascript" th:src="@{/js/plugins/bootstrap-dialog/bootstrap-dialog.min.js}"></script>
+	<!--bootstrap-dialog end-->
+	<script type="text/javascript" th:src="@{/js/customPlugin.js}"></script>
+	<script th:inline="javascript">
+	 data_menu="5_4";
+		$(function(){
+
+			onLoad();
+
+			BindEvent();
+			 //页面加载
+			 function onLoad()
+			 {
+		     	//渲染树
+		     	$('#left-tree').treeview({
+		     		data: getTree(),
+		     		levels: 2,
+		     		onNodeSelected:function(event, node){
+		     			$('#editName').val(node.text);
+		     		},
+					showCheckbox:false//是否显示多选
+				});   
+		     }
+		     //事件注册
+		     function BindEvent()
+		     {
+		     	 //保存-新增
+		     	 $("#Save").click(function () {
+		     		var chinaName=$('#addName').val();
+		     		var parentId=$('#left-tree').treeview('getSelected')[0].id;
+		     		 if(chinaName==''){
+		     			 layer.alert('不能为空！', {
+	                            icon: 5,
+	                            skin: 'layer-ext-moon'
+	                        })
+		     		 }else
+		     		 {
+		     			 $.ajax({
+		                    url : '/premission/checkPreCode',
+		                    type : 'get',
+		                    timeout : 600000, //超时时间设置，单位毫秒
+		                    data : {chinaName : chinaName,
+		                    	      parentId:parentId},
+		                    error:function(){
+		                        layer.alert('请求失败！', {
+		                            icon: 5,
+		                            skin: 'layer-ext-moon'
+		                        })
+		                    },
+		                    success:function(data){
+		                        if(data || data=="true"){
+		                        	layer.msg('新增成功！',{time:1*1000}, function(){ window.location.reload();});
+		                        }else{
+		                            layer.alert('已存在！', {
+		                                icon: 5,
+		                                skin: 'layer-ext-moon'
+		                            });
+		                        }
+		                    }
+		                });
+		     	 }
+
+                    });
+		     	}
+		     	//保存-编辑
+		     	$('#Edit').click(function(){
+		     		
+		     		var chinaName=$('#editName').val();
+		     		var parentId=$('#left-tree').treeview('getSelected')[0].id;
+		     		 if(chinaName==''){
+		     			 layer.alert('不能为空！', {
+	                            icon: 5,
+	                            skin: 'layer-ext-moon'
+	                        })
+		     		 }else
+		     		 {
+		     			 $.ajax({
+		                    url : '/premission/editName',
+		                    type : 'get',
+		                    timeout : 600000, //超时时间设置，单位毫秒
+		                    data : {chinaName : chinaName,
+		                    	      parentId:parentId},
+		                    error:function(){
+		                        layer.alert('请求失败！', {
+		                            icon: 5,
+		                            skin: 'layer-ext-moon'
+		                        })
+		                    },
+		                    success:function(data){
+		                        if(data || data=="true"){
+		                        	layer.msg('编辑成功！',{time:1*1000}, function(){ window.location.reload();});
+		                        }else{
+		                            layer.alert('已存在！', {
+		                                icon: 5,
+		                                skin: 'layer-ext-moon'
+		                            });
+		                        }
+		                    }
+		                });
+		     	 }
+			 
+		     	});
+
+
+			//显示-添加
+			$("#btnAdd").click(function(){
+				/* var tree = [[${tree}]];
+				if(tree.length==0){
+					$.showMsgText('请选择权限');
+					return;
+				} */
+				 var node = $('#left-tree').treeview('getSelected');
+				 if (node.length == 0) {
+					$.showMsgText('请选择权限');
+					return;
+				}  
+				$('#addName').val('');
+				$('#addOperation-dialog').modal('show');
+				
+			});
+			//显示-编辑
+			$("#btnEdit").click(function(){
+				var node=$('#left-tree').treeview('getSelected');
+				$('#editShow').show();
+
+			});
+			//删除
+			$("#btnDel").click(function(){
+				var node = $('#left-tree').treeview('getSelected');
+				if (node.length == 0) {
+					$.showMsgText('请选择权限');
+					return;
+				}
+				  BootstrapDialog.confirm({
+                        title: '提示',
+                        message: '确定删除此权限?',
+                        size: BootstrapDialog.SIZE_SMALL,
+                        type: BootstrapDialog.TYPE_DEFAULT,
+                        closable: true,
+                        btnCancelLabel: '取消', 
+                        btnOKLabel: '确定', 
+                        callback: function (result) {
+                            if(result)
+                            {
+                                del();
+                            }
+                        }
+                    });
+				  function del(){
+				  	
+			     		var parentId=$('#left-tree').treeview('getSelected')[0].id;
+			     			 $.ajax({
+			                    url : '/premission/delPermission',
+			                    type : 'get',
+			                    timeout : 600000, //超时时间设置，单位毫秒
+			                    data : {parentId:parentId},
+			                    error:function(){
+			                        layer.alert('请求失败！', {
+			                            icon: 5,
+			                            skin: 'layer-ext-moon'
+			                        })
+			                    },
+			                    success:function(data){
+			                        if(data || data=="true"){
+			                        	layer.msg('删除成功！',{time:1*1000}, function(){ window.location.reload();});
+			                        }else{
+			                            layer.alert('删除失败！', {
+			                                icon: 5,
+			                                skin: 'layer-ext-moon'
+			                            });
+			                        }
+			                    }
+			                });
+				 
+				  }
+				
+			});
+
+			//获取树数据
+			function getTree(){
+			 var tree = [[${tree}]];
+			 return tree;             
+			}
+			/*-----页面pannel内容区高度自适应 start-----*/
+			$(window).resize(function () {
+				setCenterHeight();
+			});
+			setCenterHeight();
+			function setCenterHeight() {
+				var height = $(window).height();
+				var centerHight = height - 240;
+				$(".right_centent").height(centerHight).css("overflow", "auto");
+			}
+			/*-----页面pannel内容区高度自适应 end-----*/
+		});
+
+
+
+	</script>
+</head>
+
+<div layout:fragment="content">
+<div class="row border-bottom">
+        <nav class="navbar navbar-static-top" role="navigation" style="margin-bottom: 0" th:include="../layout/left :: right_head"> </nav>
+        <div class="pageheader">
+           		<ol class="breadcrumb">
+					<li><a href="/main">首页</a></li>
+					<li>系统管理</li>
+					<li class="active">编辑权限</li>
+				</ol>
+				<h1>编辑权限</h1>
+        </div>
+    </div>
+	<header class="container" style="margin-bottom: 35px;">
+		<div class="row">
+			<div class="col-md-12">
+				<input id="btnAdd" class="btn btn-primary" type="button" value="添加权限">
+				<input id="btnDel" class="btn btn-danger" type="button" value="删除权限">
+			</div>
+		</div>
+	</header>
+
+
+	<div class="container">
+		<div class="row">
+			<div class="col-md-4">
+				<div class="panel panel-primary ">
+					<div class="panel-heading">
+						<h3 class="panel-title">科目树</h3>
+					</div>
+					<div class="panel-body right_centent" style="">
+						<div id="left-tree"></div>
+					</div>
+				</div>
+			</div>
+			<div class="col-md-7">
+				<div class="panel panel-primary ">
+					<div class="panel-heading">
+						<h3 class="panel-title">编辑区</h3>
+					</div>
+					<!--编辑操作权限 start-->
+                <div class="panel-body right_centent">
+                <div  id="editShow">
+                	<div>
+                        <div class="input-group margin-t-5">
+                            <span class="input-group-addon" >名称:</span>
+
+                            <input id="editName" type="text"  class="form-control" />
+                        </div>
+                    </div>
+                    <div style="margin-top: 10px;">
+                        <input id="Edit" class="btn btn-primary" type="button" value="确定" />
+                        <input id="Edit_cancel" class="btn btn-default" type="button" style="margin-left:80px;display:none;" value="取消" />
+                    </div>
+                </div>
+                </div>
+                <!--编辑操作权限 end-->
+				</div>
+			</div>
+		</div>
+	</div>
+	<div>
+		<!--弹出框 新增权限 start-->
+		<div class="modal fade" id="addOperation-dialog" tabindex="-1" role="dialog" aria-labelledby="myModalLabel">
+			<div class="modal-dialog" role="document">
+
+				<div class="modal-content radius_5">
+					<div class="modal-header">
+						<button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+						<h4 class="modal-title" id="myModalLabel">新增</h4>
+					</div>
+					<div class="modal-body">
+						<div group="" item="add">
+							<div>
+								<div class="input-group margin-t-5">
+									<span class="input-group-addon">名称:</span>
+									<input id="addName" type="text" class="form-control" />
+								</div>
+
+							</div>
+						</div>
+
+					</div>
+					<div class="modal-footer">
+						<button id="Save" type="button" class="btn btn-primary">保存</button>
+						<button type="button" class="btn btn-default" data-dismiss="modal">取消</button>
+
+					</div>
+				</div>
+
+
+			</div>
+		</div>
+		<!--弹出框 新增权限 end-->
+		 
+	</div>
+	
+
+</div>
+</html>

@@ -1,0 +1,55 @@
+<!DOCTYPE html>
+<html xmlns:layout="http://www.w3.org/1999/xhtml"
+	xmlns:th="http://www.w3.org/1999/xhtml"
+	layout:decorator="../layout/default"
+	xmlns:sec="http://www.thymeleaf.org/thymeleaf-extras-springsecurity4">
+
+<head>
+<meta charset="utf-8" />
+<title>首页</title>
+<style>
+.card-box{margin-top:auto;}
+.pag_con .p_l{width:60px;height:60px;float:left;background:#fdfdfd;border:1px solid #94ccff;border-radius:60px;overflow: hidden;}
+.pag_con .p_r{padding-top:16px;margin:15px auto;}
+</style>
+</head>
+<div layout:fragment="content">
+	<div class="row border-bottom">
+		<nav class="navbar navbar-static-top" role="navigation"
+			style="margin-bottom: 0" th:include="../layout/left :: right_head">
+		</nav>
+	</div>
+	
+	<table class="table">
+	    <tr>
+	        <th>名称</th>
+	        <th>职业</th>
+	        <th>简介</th>
+	        <th>创建时间</th>
+	        <th>操作</th>
+	    </tr>
+	    <tr>
+	        <td style="font-size: 20px;">思青城</td>
+	        <td>牧师</td>
+	        <td>biubiubiubiu</td>
+	        <td>2019-03-01</td>
+	        <td><a th:href="@{/member/detail}">详情</a> </td>
+	    </tr>
+	    <tr>
+	        <td style="font-size: 20px;">魏无羡</td>
+	        <td>战士</td>
+	        <td>云梦江氏大弟子</td>
+	        <td>2019-03-02</td>
+	        <td><a th:href="@{/member/detail}">详情</a> </td>
+	    </tr>
+	    <tr>
+	        <td style="font-size: 20px;">苏沐橙</td>
+	        <td>法师</td>
+	        <td>一流女玩家</td>
+	        <td>2019-03-03</td>
+	        <td><a th:href="@{/member/detail}">详情</a> </td>
+	    </tr>
+	</table>
+</div>
+
+</html>

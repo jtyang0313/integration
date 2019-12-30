@@ -1,0 +1,44 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.yjt.mapper.CompanyInvoiceMapper" >
+  <resultMap id="BaseResultMap" type="CompanyInvoice" >
+    <id column="id" property="id" jdbcType="INTEGER" />
+    <result column="company_code" property="companyCode" jdbcType="VARCHAR" />
+    <result column="company_rise" property="companyRise" jdbcType="VARCHAR" />
+    <result column="duty_paragraph" property="dutyParagraph" jdbcType="VARCHAR" />
+    <result column="address" property="address" jdbcType="VARCHAR" />
+    <result column="bank" property="bank" jdbcType="VARCHAR" />
+    <result column="bank_account" property="bankAccount" jdbcType="VARCHAR" />
+    <result column="telephone" property="telephone" jdbcType="VARCHAR" />
+    <result column="state" property="state" jdbcType="INTEGER" />
+    <result column="operate_name" property="telephone" jdbcType="VARCHAR" />
+    <result column="remark" property="remark" jdbcType="VARCHAR" />
+    <result column="create_time" property="createTime" jdbcType="TIMESTAMP" />
+    <result column="update_time" property="updateTime" jdbcType="TIMESTAMP" />
+  </resultMap>
+  <sql id="Base_Column_List" >
+    id, company_code, company_rise, duty_paragraph, address, bank, bank_account, telephone, 
+    state, operate_name,remark,create_time, update_time
+  </sql>
+  
+  <select id="selectByCompanyCode" resultMap="BaseResultMap" parameterType="String">
+  	select <include refid="Base_Column_List"/> from tb_company_invoice
+  	where company_code = #{companyCode}
+  </select>
+  
+  <select id="selectList" resultMap="BaseResultMap" parameterType="String">
+  	select <include refid="Base_Column_List"/> from tb_company_invoice
+  	where company_code = #{companyCode}
+  </select>
+  
+  <select id="selectBycompanyRise" resultMap="BaseResultMap" parameterType="String">
+  	select <include refid="Base_Column_List"/> from tb_company_invoice
+  	where company_rise = #{companyRise}
+  </select>
+  
+  <select id="selectByDutyParagraph" resultMap="BaseResultMap" parameterType="String">
+  	select <include refid="Base_Column_List"/> from tb_company_invoice
+  	where duty_paragraph = #{dutyParagraph}
+  </select>
+  
+</mapper>

@@ -1,0 +1,217 @@
+<!DOCTYPE html>
+<html xmlns:layout="http://www.w3.org/1999/xhtml"
+	xmlns:th="http://www.w3.org/1999/xhtml"
+	layout:decorator="../layout/default"
+	xmlns:sec="http://www.thymeleaf.org/thymeleaf-extras-springsecurity4">
+
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="renderer" content="webkit">
+<title>用户管理</title>
+<link th:href="@{/css/plugins/iCheck/custom.css}" rel="stylesheet"/>
+</head>
+
+<div layout:fragment="content">
+	<div class="row border-bottom">
+        <nav class="navbar navbar-static-top" role="navigation" style="margin-bottom: 0" th:include="../layout/left :: right_head"> </nav>
+        <div class="pageheader">
+           		<ol class="breadcrumb">
+					<li><a href="/main">首页</a></li>
+					<li>系统管理</li>
+					<li><a href="/user/list">用户管理</a></li>
+					<li class="active">新建用户</li>
+				</ol>
+        </div>
+    </div>
+	<!-- 右下主体开始-->
+	<div class="row J_mainContent" id="content-main">
+		<!--主开始-->
+		<div class="wrapper wrapper-content animated fadeInRight">
+			<div class="ibox float-e-margins">
+				<div class="ibox-content">
+					<form method="post" th:action="@{/user/add}"
+						class="form-horizontal" style="margin-top: 8px" id="userForm">
+						<div class="form-group">
+							<label class="col-sm-3 control-label">登录名</label>
+							<div class="col-sm-6 control-wrapper">
+								<input type="text" class="form-control" name="userName">
+							</div>
+						</div>
+					   <div class="form-group">
+							<label class="col-sm-3 control-label">真实姓名</label>
+							<div class="col-sm-6 control-wrapper">
+								<input type="text" class="form-control" name="realName">
+							</div>
+						</div>
+						<div class="form-group">
+							<label class="col-sm-3 control-label">企业名称</label>
+							<div class="col-sm-6 control-wrapper">
+								<select class="form-control" name="companyCode"  required aria-required="true">
+									<option value="">全部</option>
+									<option th:each="e:${companyList}" th:text="${e.companyName}"  th:value="${e.companyCode}">
+									</option>
+								</select>
+							 
+							</div>
+						</div>
+						<div class="form-group">
+							<label class="col-sm-3 control-label">密码</label>
+
+							<div class="col-sm-6 control-wrapper">
+								<input type="password" class="form-control" id="password" name="password">
+							</div>
+						</div>
+
+						<div class="form-group">
+							<label class="col-sm-3 control-label">确认密码</label>
+
+							<div class="col-sm-6 control-wrapper">
+								<input type="password" class="form-control" name="rePassword">
+							</div>
+						</div>
+
+						<div class="form-group">
+							<label class="col-sm-3 control-label">角色</label>
+							    <div class="col-sm-6 control-wrapper" style="margin-bottom:-10px;">
+							      <div class="checkbox i-checks">
+									<label th:each="role:${roleList}" style="margin:auto 15px 10px auto;">
+										<input name="roleIds"
+										type="checkbox" th:value="${role.id}" th:text="${role.roleName}">
+									</label>
+								  </div>
+								  <div class="mt10px" id="roleIdErrLabel" ></div>
+							</div>
+						</div>
+
+						<div class="form-group">
+							<div class="col-sm-4 col-sm-offset-3 control-wrapper">
+								<button class="btn btn-primary" id="formSubmit" type="button">提交</button>
+								<button class="btn btn-white" type="button" onclick="window.location.href='/user/list'">返回</button>
+							</div>
+						</div>
+					</form>
+				</div>
+			</div>
+		</div>
+		<!--主结束-->
+	</div>
+	
+	<script th:src="@{/js/plugins/iCheck/icheck.min.js}"></script>
+    <script th:src="@{/js/plugins/validate/jquery.validate.min.js}"></script>
+	<script th:src="@{/js/plugins/validate/messages_zh.min.js}"></script>
+   <script th:inline="javascript">
+		data_menu="1_1";
+		$(document).ready(function() {
+			$('.i-checks').iCheck({
+				checkboxClass : 'icheckbox_square-green',
+				radioClass : 'iradio_square-green',
+			});
+			
+			$("input[type='checkbox']").on('ifClicked', function(){
+		    	 var spanObj = $("#roleIdErrLabel");
+			  	 spanObj.html("");
+		    });
+			
+		});
+		 
+		
+		$("#formSubmit").click(function() {
+			 var resultFlag = $("#userForm").valid();
+			 var flag=false;
+			 var back = $(".checkbox input[type=checkbox]");
+				back.each(function(){
+					 if(this.checked){
+						 var spanObj = $("#roleIdErrLabel");
+					  	 spanObj.html("");
+						 flag=true
+						 return false;
+					}else{
+						var spanObj = $("#roleIdErrLabel");
+						spanObj.html("");
+						spanObj.css("color", "red");
+						spanObj.html("请选择角色");
+					} 
+				});
+
+		   if(flag){
+			    if (resultFlag) {
+					$("#userForm").submit();
+				 	$("#formSubmit").prop("disabled",true);
+				}  
+		   }
+			
+		})
+		
+		$("#userForm").validate(
+						{
+							onfocusout : function(element) {
+								$(element).valid();
+							},
+							ignore : "ignore",
+							rules : {
+								userName:{
+									required:true,
+									maxlength: 20,
+									remote:"/user/userName"
+								},
+								realName:{
+									required:true,
+								},
+								companyCode:{
+									required:true,
+								},
+								password : {
+									required : true,
+									minlength:6
+								},
+							    rePassword : {
+									required : true,
+									equalTo:"#password"
+								},
+								 
+							},
+							messages : {
+								userName:{
+									required:"请输入登录名",
+									maxlength: "限定20字符内",
+									remote: "该登录名已经存在"
+								},
+								realName:{
+									required:"请输入真实姓名",
+								},
+								companyCode:{
+									required:"请输入企业名称",
+								},
+								password : {
+									required:"请输入密码",
+									minlength:"密码至少是6位"
+								},
+							    rePassword: {
+									required:"请再一次输入密码",
+									equalTo: "两次输入的密码不一致"
+								},
+							},
+							highlight : function(element, errorClass,validClass) {
+								//打开高亮
+								$(element).parent().removeClass("has-success").addClass("has-error")
+							},
+							unhighlight : function(element, errorClass,validClass) {
+								//关闭高亮
+								$(element).parent().removeClass("has-error").addClass("has-success")
+							},
+							errorPlacement : function(error, element) {
+								error.appendTo(element.parent());
+							},
+							errorClass : "help-block",
+							errorElement : "div"
+
+						})
+						
+	</script>
+</div>
+<!--右侧部分结束-->
+
+</body>
+
+</html>

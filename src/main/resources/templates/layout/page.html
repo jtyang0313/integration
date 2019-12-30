@@ -1,0 +1,162 @@
+<html xmlns:th="http://www.thymeleaf.org"
+	xmlns:layout="http://www.w3.org/1999/xhtml"
+	xmlns:sec="http://www.thymeleaf.org/thymeleaf-extras-springsecurity4">
+<head>
+<meta charset="utf-8" />
+
+</head>
+<div th:fragment="page">
+    <input id="current" name="current" th:value="${page.current}" type="hidden" />
+	<input id="pages" name="pages" th:value="${page.pages}" type="hidden" />
+	<div class="row">
+		<div class="" style="float:left;margin-left:15px;">
+			<div class="dataTables_info" id="DataTables_Table_0_info" role="alert" aria-live="polite" aria-relevant="all">
+				显示 <span th:text="1+(${page.current}-1)*${page.size}">1</span> 到 <span
+					th:text="${page.size}*${page.current}">10</span> 项，共 <span
+					th:text="${page.total}">57</span>项
+			</div>
+		</div>
+		<div class="" style="float: right; margin-right: 15px;">
+			<div class="" style="float: right; margin-top: -20px;">
+				<div class="pagination-jumper">
+					<span class="spanText">跳至</span>
+					<span class="spanInput"><input id="pNo" name="pNo"  /></span>
+					<span class="spanText">页</span>
+					<button id="pSubmit" type="button">确定</button>
+				</div>
+				<div class="pagination-jumper">
+					<span class="spanText">每页显示</span>
+					<span class="">
+						<select name="size" id="pSizeSelect" >
+							<option value="10" th:selected="${page.size}=='10' ? true : false">10条</option>
+							<option value="20" th:selected="${page.size}=='20' ? true : false">20条</option>
+							<option value="30" th:selected="${page.size}=='30' ? true : false">30条</option>
+							<option value="40" th:selected="${page.size}=='40' ? true : false">40条</option>
+							<option value="50" th:selected="${page.size}=='50' ? true : false">50条</option>
+						</select>
+					</span>
+				</div>
+				<ul class="pagination">
+					<li class="paginate_button previous" aria-controls="DataTables_Table_0" tabindex="0" id="DataTables_Table_0_previous"><a id="prePage"> &lt; </a></li>
+					<li class="paginate_button next" aria-controls="DataTables_Table_0"tabindex="0" id="DataTables_Table_0_next"><a id="nextPage"> &gt; </a></li>
+				</ul>
+			</div>
+		</div>
+	</div>
+	<script>
+		var current = parseInt($('#current').val());
+		var pages = parseInt($('#pages').val());
+		$("#prePage").click(function() {
+			if (current == 1) {
+				current = 1;
+			} else {
+				current = current - 1;
+				$('#current').val(current);
+				$("#searchForm").submit();
+			}
+			
+		});
+		$("#nextPage").click(function() {
+			if (current >= pages) {
+				current = pages;
+			} else {
+				current = current + 1;
+				$('#current').val(current);
+				$("#searchForm").submit();
+			}
+			
+		});
+		$(".spanInput").click(function(){
+			$("#pNo").removeAttr("disabled").select();
+		})
+		$(".spanInput").focusout(function(){
+			$("#pNo").attr("disabled","disabled");
+		})
+		 $("#pSubmit").click(function(){
+			 if( !isNaN($('#pNo').val()))
+		      {
+		    	  pNo=parseInt($('#pNo').val());
+		    	  if(pNo>0 && pNo<=pages && (pNo != current)){
+		    		  current=pNo;
+		    		  $('#current').val(current);
+		    		  $("#pNo").attr("disabled","disabled");
+		    		  $("#searchForm").submit();
+		    	  }
+		    	  	
+		      }
+		 })
+		 $("#pSizeSelect").change(function(){
+			 $("#searchForm").submit();
+		 })
+	
+		function currentPage(page) {
+			$('#current').val(page);
+			$("#searchForm").submit();
+		};
+		$("#search").click(function() {
+			$('#current').val(1);
+			$("#searchForm").submit();
+		});
+		function htmlList(){
+			
+		}
+	
+		var html = '';
+		$(function() {
+			
+			/*
+			for (var i = 1; pages >= i; i++) {
+				if (current == i) {
+					html += '<li  class="paginate_button active" aria-controls="DataTables_Table_0" tabindex="0"><a onclick="currentPage(this.innerHTML)">'
+							+ i + '</a></li>';
+				} else {
+					html += '<li class="paginate_button" aria-controls="DataTables_Table_0" tabindex="0"><a onclick="currentPage(this.innerHTML)">'
+							+ i + '</a></li>';
+				}
+			}
+			*/
+			html += '<li  class="paginate_button" aria-controls="DataTables_Table_0" tabindex="1"><a onclick="currentPage(this.innerHTML)">'+ 1 + '</a></li>';
+			
+			if(current-3>1 && pages>8){
+				html += '<li class="pmove" ><span>…</span></li>';
+			}
+			
+			if(pages<=8){
+				for(var i=2;i<pages;i++){
+					html += '<li  class="paginate_button" aria-controls="DataTables_Table_0" tabindex="'+i+'"><a onclick="currentPage(this.innerHTML)">'+ i + '</a></li>';
+				}
+			}else{
+				if(current<5){
+					for(var i=2;i<7 && i<pages;i++){
+						html += '<li  class="paginate_button" aria-controls="DataTables_Table_0" tabindex="'+i+'"><a onclick="currentPage(this.innerHTML)">'+ i + '</a></li>';
+					}
+				}
+				if(current>=5 && pages - current>=3){
+					for(var i=1;i<6 && current+i-3<pages;i++){
+						html += '<li  class="paginate_button" aria-controls="DataTables_Table_0" tabindex="'+(current+i-3)+'"><a onclick="currentPage(this.innerHTML)">'+ (current+i-3) + '</a></li>';
+					}
+				}
+				if(pages - current<3 && current>=5 ){
+					for(var i=pages-5;i<pages ;i++){
+						html += '<li  class="paginate_button" aria-controls="DataTables_Table_0" tabindex="'+i+'"><a onclick="currentPage(this.innerHTML)">'+ i + '</a></li>';
+					}
+				}
+				if(pages - current>3){
+					
+					html += '<li class="pmove" ><span>…</span></li>';
+				}
+			}
+			if(pages>1)
+				html += '<li  class="paginate_button" aria-controls="DataTables_Table_0" tabindex="'+pages+'"><a onclick="currentPage(this.innerHTML)">'+ pages + '</a></li>';
+			
+			$('#DataTables_Table_0_previous').after(html);
+			if(current == 1) {
+				$(".previous").addClass("disabled");
+			}
+			if(current == pages) {
+				$(".next").addClass("disabled")
+			}
+			$(".pagination li[tabindex='"+current+"']").addClass("active");
+		});
+	</script>
+</div>

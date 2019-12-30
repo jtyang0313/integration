@@ -1,0 +1,133 @@
+<!DOCTYPE html>
+<html xmlns:layout="http://www.w3.org/1999/xhtml"
+	xmlns:th="http://www.w3.org/1999/xhtml"
+	layout:decorator="../layout/default"
+	xmlns:sec="http://www.thymeleaf.org/thymeleaf-extras-springsecurity4">
+<head>
+<meta charset="utf-8"/>
+<title>角色管理</title>
+</head>
+
+<div layout:fragment="content">
+	<div class="row border-bottom">
+        <nav class="navbar navbar-static-top" role="navigation" style="margin-bottom: 0" th:include="../layout/left :: right_head"> </nav>
+        <div class="pageheader">
+           		<ol class="breadcrumb">
+					<li><a href="/main">首页</a></li>
+					<li>系统管理</li>
+					<li>角色管理</li>
+				</ol>
+        </div>
+    </div>
+	<div class="row J_mainContent" id="content-main">
+			<div class="wrapper wrapper-content animated fadeInRight">
+					<div class="ibox float-e-margins">
+						
+						<div class="ibox-content">
+						<form role="form" class="form-horizontal search" th:action="@{/role/list}" id="searchForm" method="post">
+							<div class="row" style="margin-right: -24px;margin-left: -24px;">
+									<div class="col-xs-12 col-sm-6 col-md-6 col-lg-4 col-xl-3 sea">
+										<div class="form-group">
+											<label class="control-label">角色</label>
+											<div class="control-wrapper">
+												<input type="text" class="form-control" placeholder="请输入角色名称" name="roleName" th:value="${roleName}">
+											</div>
+										</div>
+									</div>
+				
+									
+									<div class="col-xs-12 col-sm-6 col-md-4 col-lg-3 col-xl-2 sea retract2">
+										<div class="form-group">
+											<div class="control-wrapper ">
+												<button class="btn btn-primary" id="search">查 询</button>
+												<button class="btn btn-primary" onclick="formReset()">重 置</button>
+											</div>
+										</div>
+									</div>
+							</div>
+							<div class="table-operator">
+								<a th:href="@{/role/add}" class="btn btn-primary" sec:authorize="hasAuthority('role_add')" ><i class="fa fa-plus"></i> 新 建</a>
+							</div>
+							<div class="table-responsive">
+								<table class="table">
+									<thead>
+										<tr>
+											<th>序号</th>
+											<th>角色名</th>
+											<!-- <th>是否可编辑</th> -->
+											<th>角色描述</th>
+											<th>创建时间</th>
+											<th>更新时间</th>
+											<th>操作</th>
+										</tr>
+									</thead>
+									<tbody>
+										<tr th:each="role,iterStat : ${page.records}">
+											<td
+												th:text="${page.size} * ${page.current-1} + ${iterStat.count}"></td>
+											<td th:text="${role.roleName}"></td>
+											<td th:text="${role.roleNote}"></td>
+											<td
+												th:text="${role.createTime} ? ${#calendars.format(role.createTime, 'yyyy-MM-dd HH:mm:ss')} : ''"></td>
+											<td
+												th:text="${role.updateTime} ? ${#calendars.format(role.updateTime, 'yyyy-MM-dd HH:mm:ss')} : ''"></td>
+											<td class="td_cz">
+												<a th:href="@{/role/edit(roleId=${role.id})}" sec:authorize="hasAuthority('role_edit')">修改</a>
+												<div class="divider-vertical"></div>
+												<a th:href="@{'javascript:del('+${role.id}+')'}" sec:authorize="hasAuthority('role_del')">删除</a>
+											</td>
+										</tr>
+									</tbody>
+								</table>
+							</div>
+							<div th:include="../layout/page :: page"></div>
+							</form>
+						</div>
+					</div>
+			</div>
+	</div>
+	<script type="text/javascript">
+		data_menu="1_2";
+		function del(id) {
+			layer.confirm('您确定要删除这个角色吗？', {
+				icon : 3,
+				btn : [ '确定', '取消' ]
+			//按钮
+			}, function() {
+
+				$.ajax({
+					url : '/role/delete?roleId=' + id,
+					async : false,
+					error : function() {
+						layer.alert('删除失败！', {
+							icon : 5,
+							skin : 'layer-ext-moon'
+						})
+					},
+					success : function(data) {
+						if ( data == "success") {
+							layer.msg('删除成功', {
+								time : 1 * 1000
+							}, function() {
+								window.location.reload();
+							});
+						} if (data == "error") {
+							layer.alert("角色正在使用，禁止删除！", {
+								icon : 5,
+								skin : 'layer-ext-moon'
+							});
+						}
+					}
+				});
+			});
+		}
+		function formReset() {
+            $(':input', '#searchForm')
+               .not(':button, :submit, :reset, :hidden,:radio') // 去除不需要重置的input类型
+               .val('')
+               .removeAttr('selected');
+        }
+	</script>
+
+</div>
+</html>

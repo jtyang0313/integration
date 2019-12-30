@@ -1,0 +1,17 @@
+package com.yjt.entity.factory;
+
+public class NYPizzaStore extends Store {
+
+	@Override
+	Pizza createPizza(String type) {
+		if(type.equals("cheese")){
+			return new NYCheesePizza();
+		}else if(type.equals("clam")){
+			return new NYClamPizza();
+		}else{
+			return null;
+		}
+	}
+
+	
+}

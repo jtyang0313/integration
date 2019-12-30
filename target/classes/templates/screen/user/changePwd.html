@@ -1,0 +1,152 @@
+<!DOCTYPE html>
+<html xmlns:layout="http://www.w3.org/1999/xhtml"
+	xmlns:th="http://www.w3.org/1999/xhtml"
+	layout:decorator="../layout/default"
+	xmlns:sec="http://www.thymeleaf.org/thymeleaf-extras-springsecurity4">
+
+<head>
+<meta charset="utf-8"/>
+<title>用户管理</title>
+</head>
+
+<div layout:fragment="content">
+	<div class="row border-bottom">
+        <nav class="navbar navbar-static-top" role="navigation" style="margin-bottom: 0" th:include="../layout/left :: right_head"> </nav>
+        <div class="pageheader">
+           		<ol class="breadcrumb">
+					<li><a href="/main">首页</a></li>
+					<li>系统管理</li>
+					<li>修改密码</li>
+				</ol>
+        </div>
+    </div>
+    
+    <div class="row J_mainContent" id="content-main">
+		<!--主开始-->
+		<div class="wrapper wrapper-content animated fadeInRight">
+			<div class="ibox float-e-margins">
+				<div class="ibox-content">
+					<form method="post" th:action="@{/user/changePwd}"
+						class="form-horizontal" id="userForm">
+						<div class="form-group">
+							<label class="col-sm-3 control-label">输入原密码</label>
+							<div class="col-sm-6 control-wrapper">
+								<input type="password" class="form-control" name="oldPassword">
+							</div>
+						</div>
+						
+						<div class="form-group">
+							<label class="col-sm-3 control-label">输入新密码</label>
+							<div class="col-sm-6 control-wrapper">
+								<input type="password" class="form-control" id="newPassword" name="newPassword">
+							</div>
+						</div>
+						
+						<div class="form-group">
+							<label class="col-sm-3 control-label">确认新密码</label>
+							<div class="col-sm-6 control-wrapper">
+								<input type="password" class="form-control" name="rePassword">
+							</div>
+						</div>
+						
+						<div class="form-group">
+							<div class="col-sm-4 col-sm-offset-3 control-wrapper">
+								<button class="btn btn-primary" type="button" id="formSubmit">提交</button>
+							</div>
+						</div>
+					</form>
+				</div>
+			</div>
+		</div>
+</div>
+
+<script src="/js/plugins/validate/jquery.validate.min.js"></script>
+<script src="/js/plugins/validate/messages_zh.min.js"></script>
+
+<script th:inline="javascript">
+	data_menu="1_3";
+
+	$("#formSubmit").click(function() {
+		var resultFlag = $("#userForm").valid();
+	  	if (resultFlag) {
+			update();
+		}
+	});
+	
+	function update() {
+		$.ajax({
+			cache : true,
+			type : "POST",
+			url : "/user/changePwd",
+			data : $('#userForm').serialize(),// 你的formid
+			async : false,
+			error : function(request) {
+				layer.alert('系统错误，联系管理员！', {
+                    icon: 5,
+                    skin: 'layer-ext-moon'
+                })
+			},
+			success : function(data) {
+				if (data==true) {
+					layer.msg('密码修改成功',{time:1*1000}, function(){ window.location.href='/logout';});
+				} else {
+					layer.alert('原密码不正确！', {
+                        icon: 5,
+                        skin: 'layer-ext-moon'
+                    });
+				}
+
+			}
+		});
+	}
+	
+		var icon = "<i class='fa fa-times-circle'></i> ";
+		$("#userForm").validate({
+			onfocusout : function(element) {
+				$(element).valid();
+			},
+			ignore : "ignore",
+			rules : {
+				oldPassword : {
+					required : true,
+				},
+				newPassword : {
+					required : true,
+					minlength : 6
+				},
+				rePassword : {
+					required : true,
+					equalTo:"#newPassword"
+				}
+			},
+			messages : {
+				oldPassword : {
+					required : icon + "请输入您的原密码",
+				},
+				newPassword : {
+					required : icon + "请输入您的新密码",
+					minlength : icon + "密码必须6个字符以上"
+				},
+				rePassword : {
+					required : icon + "请确定您的新密码",
+					equalTo: icon + "两次输入的密码不一致"
+				}
+			},
+			highlight : function(element, errorClass,validClass) {
+				//打开高亮
+				$(element).parent().removeClass("has-success").addClass("has-error")
+			},
+			unhighlight : function(element, errorClass,validClass) {
+				//关闭高亮
+				$(element).parent().removeClass("has-error").addClass("has-success")
+			},
+			errorPlacement : function(error, element) {
+				error.appendTo(element.parent());
+			},
+			errorClass : "help-block",
+			errorElement : "div"
+		})
+</script>
+</div>
+
+</html>

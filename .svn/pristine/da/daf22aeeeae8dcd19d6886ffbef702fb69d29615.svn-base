@@ -1,0 +1,170 @@
+<!DOCTYPE html>
+<html xmlns:layout="http://www.w3.org/1999/xhtml"
+	xmlns:th="http://www.w3.org/1999/xhtml"
+	layout:decorator="../layout/default"
+	xmlns:sec="http://www.thymeleaf.org/thymeleaf-extras-springsecurity4">
+
+<head>
+<meta charset="utf-8" />
+<title>用户管理</title>
+</head>
+
+<div layout:fragment="content">
+	<div class="row border-bottom">
+		<nav class="navbar navbar-static-top" role="navigation"
+			style="margin-bottom: 0" th:include="../layout/left :: right_head">
+		</nav>
+		<div class="pageheader">
+			<ol class="breadcrumb">
+				<li><a href="/main">首页</a></li>
+				<li>系统管理</li>
+				<li>用户管理</li>
+			</ol>
+		</div>
+	</div>
+	<div class="row J_mainContent" id="content-main">
+		<div class="wrapper wrapper-content animated fadeInRight">
+			<div class="ibox float-e-margins">
+				<div class="ibox-content">
+					<form th:action="@{/user/list}" method="post" id="searchForm"
+						class="form-horizontal search">
+						<div class="row" style="margin-right: -24px; margin-left: -24px;">
+							<div class="col-xs-12 col-sm-6 col-md-6 col-lg-4 col-xl-3 sea">
+								<div class="form-group">
+									<label class="control-label">登录名</label>
+									<div class="control-wrapper">
+										<input type="text" class="form-control" name="userName"
+											placeholder="请输入登录名" th:value="${user.username}">
+									</div>
+								</div>
+							</div>
+
+							<div
+								class="col-xs-12 col-sm-6 col-md-4 col-lg-3 col-xl-2 sea retract2">
+								<div class="form-group">
+									<div class="control-wrapper ">
+										<button id="search" class="btn btn-primary">查 询</button>
+										<button class="btn btn-primary" onclick="formReset()">重置</button>
+									</div>
+								</div>
+							</div>
+						</div>
+						<div class="table-operator">
+							<button type="button" onclick="window.location.href='/user/add'" sec:authorize="hasAuthority('user_add')" 
+								class="btn btn-primary">
+								<i class="fa fa-plus"></i> 新 建
+							</button>
+						</div>
+						<div class="table-responsive">
+							<table class="table ">
+								<thead>
+									<tr>
+										<th>序号</th>
+										<th>登陆名</th>
+										<th>用户名称</th>
+										<th>企业名称</th>
+										<th>角色</th>
+										<th>操作</th>
+									</tr>
+								</thead>
+								<tbody>
+									<tr th:each="user,iterStat : ${page.records}">
+										<td
+											th:text="${page.size} * ${page.current-1} + ${iterStat.count}"></td>
+										<td th:text="${user.username}"></td>
+										<td th:text="${user.realName}"></td>
+										<td th:text="${user.companyName}"></td>
+										<td th:text="${user.roleName}"></td>
+										<td><a th:href="@{/user/edit(id=${user.id})}" sec:authorize="hasAuthority('user_edit')" >修改</a>
+											<div class="divider-vertical"></div> <a
+											th:onclick="'del('+${user.id}+')'" sec:authorize="hasAuthority('user_del')" >删除</a>
+											<div class="divider-vertical"></div> <a
+											th:onclick="'resetPwd('+${user.id}+')'" sec:authorize="hasAuthority('reset_pwd')" >重置密码</a></td>
+
+									</tr>
+								</tbody>
+							</table>
+						</div>
+						<div th:include="../layout/page :: page"></div>
+					</form>
+				</div>
+			</div>
+		</div>
+	</div>
+
+	<script type="text/javascript">
+		data_menu = "1_1";
+		function del(id) {
+			layer.confirm('您确定要删除这个用户吗？', {
+				icon : 3,
+				btn : [ '确定', '取消' ]
+			//按钮
+			}, function() {
+				$.ajax({
+					url : '/user/delete?id='+id,
+					type : 'post',
+					async : false,
+					error : function() {
+						layer.alert('系统错误，联系管理员！', {
+							icon : 5,
+							skin : 'layer-ext-moon'
+						})
+					},
+					success : function(data) {
+						if (data.flag == true) {
+							layer.msg('删除成功', {icon : 1, time : 1000}, function() {
+								window.location.reload();
+							});
+						} else {
+							layer.alert(data.msg, {
+								icon : 5,
+								skin : 'layer-ext-moon'
+							});
+						}
+					}
+				});
+			});
+		};
+
+		function resetPwd(id) {
+			layer.confirm('您确定要重置此密码吗？', {
+				icon : 3,
+				btn : [ '确定', '取消' ]
+			//按钮
+			}, function() {
+				$.ajax({
+					url : '/user/resetPwd?id=' + id,
+					type : 'post',
+					async : false,
+					error : function() {
+						layer.alert('系统错误，联系管理员！', {
+							icon : 5,
+							skin : 'layer-ext-moon'
+						})
+					},
+					success : function(data) {
+						if (true) {
+							layer.msg('该密码已重置', {icon : 1,
+								time : 1 * 1000
+							}, function() {
+								window.location.reload();
+							});
+						} else {
+							layer.alert("操作失败！", {
+								icon : 5,
+								skin : 'layer-ext-moon'
+							});
+						}
+					}
+				});
+			});
+		}
+
+		function formReset() {
+			$(':input', '#searchForm').not(
+					':button, :submit, :reset, :hidden,:radio') // 去除不需要重置的input类型
+			.val('').removeAttr('selected');
+		}
+	</script>
+</div>
+</html>

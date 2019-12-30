@@ -1,0 +1,200 @@
+<!DOCTYPE html>
+<html xmlns:layout="http://www.w3.org/1999/xhtml"
+	xmlns:th="http://www.w3.org/1999/xhtml"
+	layout:decorator="../layout/default"
+	xmlns:sec="http://www.thymeleaf.org/thymeleaf-extras-springsecurity4">
+
+<head>
+<meta charset="utf-8" />
+<title>公会列表</title>
+</head>
+
+<div layout:fragment="content">
+	<div class="row border-bottom">
+		<nav class="navbar navbar-static-top" role="navigation"
+			style="margin-bottom: 0" th:include="../layout/left :: right_head">
+		</nav>
+		<div class="pageheader">
+			<ol class="breadcrumb">
+				<li><a href="/">首页</a></li>
+				<li class="active">公会管理</li>
+			</ol>
+		</div>
+	</div>
+	<!--右下 主体部-->
+	<div class="row J_mainContent" id="content-main">
+		<div class="wrapper wrapper-content animated fadeInRight">
+			<div class="ibox float-e-margins">
+				<div class="ibox-content">
+					<form method="post" th:action="@{/company/list}"
+						class="form-horizontal search" id="searchForm">
+						<div class="row" style="margin-right: -24px; margin-left: -24px;">
+							<div class="col-xs-12 col-sm-6 col-md-6 col-lg-4 col-xl-3 sea">
+								<div class="form-group">
+									<label class="control-label">公会名称</label>
+									<div class="control-wrapper">
+										  <input type="text" class="form-control" name="companyName" th:value="${#httpServletRequest.getParameter('companyName')}"> 
+									</div>
+								</div>
+							</div>
+							<div class="col-xs-12 col-sm-6 col-md-6 col-lg-4 col-xl-3 sea">
+								<div class="form-group">
+									<label class="control-label">公会编码</label>
+									<div class="control-wrapper">
+										<input type="text" class="form-control" name="companyCode"
+											th:value="${#httpServletRequest.getParameter('companyCode')}">
+									</div>
+								</div>
+							</div>
+							<div class="col-xs-12 col-sm-6 col-md-6 col-lg-4 col-xl-3 sea">
+								<div class="form-group">
+									<label class="control-label">公会类型</label>
+									<div class="control-wrapper">
+										<select class="form-control" name="type">
+											<option value="">全部</option>
+											<option th:each="e:${enumCompanyType}" th:text="${e.name}"
+													th:value="${e.value}"
+													th:selected="${#httpServletRequest.getParameter('type')}==${e.value}"></option>
+										</select>
+									</div>
+								</div>
+							</div>
+
+							<div class=" col-xs-12 col-sm-12 col-md-8 col-lg-4 col-xl-3 sea ">
+								<div class="form-group">
+									<label class="control-label">更新时间</label>
+									
+									<div class="control-wrapper timebox">
+										<input type="text" placeholder="开始时间- 结束时间" name="updateTime"
+											   id="updateTime"
+											   th:value="${#httpServletRequest.getParameter('updateTime')}" />
+									</div>
+								</div>
+							</div>
+
+							<div
+								class="col-xs-12 col-sm-6 col-md-4 col-lg-3 col-xl-2 sea retract2">
+								<div class="form-group">
+									<div class="control-wrapper ">
+										<button class="btn btn-primary" id="search">查 询</button>
+										<button class="btn btn-primary" onclick="formReset()">重
+											置</button>
+									</div>
+								</div>
+							</div>
+						</div>
+						<div class="table-operator">
+							<button 
+							 type="button" onclick="window.location.href='/company/add'"
+							 sec:authorize="hasAuthority('company_add')"
+								class="btn btn-primary">
+								<i class="fa fa-plus"></i> 新 建
+							</button>
+						</div>
+						<div class="table-responsive">
+							<table class="table ">
+								<thead>
+									<tr>
+										<th>序号</th>
+										<th>公会名称</th>
+										<th>公会类型</th>
+										<th>公会编码</th>
+										<th>创建时间</th>
+										<th>更新时间</th>
+										<th>操作</th>
+									</tr>
+								</thead>
+								<tbody>
+									<tr th:each="company,iterStat : ${page.records}">
+										<td
+											th:text="${page.size} * ${page.current-1} + ${iterStat.count}"></td>
+										<td th:text="${company.companyName}"></td>
+										<td>
+											<span th:if="${company.type} != null" th:text="${companyTypeMap[company.type]}"></span>
+										</td>
+										<td th:text="${company.companyCode}"></td>
+										<td th:if="${company.createTime != null}"><span
+											th:text="${#dates.format(company.createTime, 'yyyy-MM-dd HH:mm:ss')}"></span>
+										</td>
+										<td th:if="${company.updateTime != null}"><span
+											th:text="${#dates.format(company.updateTime, 'yyyy-MM-dd HH:mm:ss')}"></span>
+										</td>
+										<td><a th:href="@{/company/detail(id=${company.id})}" sec:authorize="hasAuthority('company_detail')">查看</a>
+											<div class="divider-vertical"></div> 
+											<a th:href="@{/company/edit(id=${company.id})}" sec:authorize="hasAuthority('company_edit')">修改</a>
+											<div class="divider-vertical"></div>
+											<a th:onclick="'javascript:del(\''+${company.id}+'\')'" sec:authorize="hasAuthority('company_delete')">删除</a>
+										</td>
+									</tr>
+								</tbody>
+							</table>
+						</div>
+						<div th:include="../layout/page :: page"></div>
+					</form>
+				</div>
+			</div>
+		</div>
+	</div>
+	<!--右侧部分结束-->
+	<script th:src="@{/js/plugins/layer/laydate5/laydate.js}"></script>
+	<script th:inline="javascript">
+		data_menu = "2_1";
+		
+		laydate.render({
+            elem: '#updateTime' //指定元素
+            //,type: 'datetime'
+            ,range: '~'
+        });
+		
+		function formReset() {
+			$(':input', '#searchForm').not(
+					':button, :submit, :reset, :hidden,:radio') // 去除不需要重置的input类型
+			.val('').removeAttr('selected');
+			$(".chosen-select").each(function(){
+				$(this).find("option:selected").attr("selected", false);
+			});		
+		}
+
+		function del(companyId) {
+			layer.confirm('是否删除公会？', {
+				btn: ['是','否'] //按钮
+			}, function(){
+				var loadingIndex =layer.msg('提交中', {
+					icon: 16,
+					shade: 0.01,
+					time : -1
+
+				});
+				$.ajax({
+					url : "/company/del?id="+companyId,
+					type : "get",
+					dataType:"json",
+					error:function(){
+						layer.close(loadingIndex);
+						layer.open({
+							content: '操作失败'
+							,skin: 'msg'
+							,time: 2000 //2秒后自动关闭
+						});
+					},
+					success:function(data){
+						layer.close(loadingIndex);
+						if(data){
+							if(data.code == 200){
+								layer.msg('删除成功！', {icon: 1,time:1000},function(){
+									window.location.href="/company/list";
+								});
+							}else{
+								layer.msg(data.message, {icon: 2,time:2000});
+							}
+						}
+					}
+				});
+			});
+		}
+		
+		
+	</script>
+</div>
+</body>
+</html>

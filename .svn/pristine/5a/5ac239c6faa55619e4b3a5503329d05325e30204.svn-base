@@ -1,0 +1,68 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.yjt.mapper.UserMapper" >
+  <resultMap id="BaseResultMap" type="User" >
+     <id column="id" property="id" jdbcType="INTEGER" />
+    <result column="company_code" property="companyCode" jdbcType="VARCHAR" />
+    <result column="user_name" property="userName" jdbcType="VARCHAR" />
+    <result column="password" property="password" jdbcType="VARCHAR" />
+    <result column="real_name" property="realName" jdbcType="VARCHAR" />
+    <result column="create_time" property="createTime" jdbcType="TIMESTAMP" />
+    <result column="update_time" property="updateTime" jdbcType="TIMESTAMP" />
+  </resultMap>
+   
+  <sql id="Base_Column_List" >
+     id,company_code, user_name, password, real_name, create_time, update_time
+  </sql>
+   
+  <sql id="Where_Clause">
+  	<where>
+      	<if test="user.userName != null and user.userName != ''">
+        	and u.user_name like CONCAT('%',#{user.userName},'%')
+      	</if>
+      	<if test="user.companyCode != null and user.companyCode != ''">
+        	and u.company_code= #{user.companyCode}
+      	</if>
+  	</where>
+  </sql>
+    
+  <select id="findByName" resultMap="BaseResultMap" parameterType="String" >
+    select 
+    <include refid="Base_Column_List" />
+    from tb_user
+    where user_name = #{userName,jdbcType=VARCHAR}
+  </select>
+  
+  
+   <select id="selectByPage" resultMap="BaseResultMap">
+	 SELECT
+	 	u.id,
+		c.company_name companyName,
+		u.user_name,
+		u.real_name,
+		(
+			SELECT
+				group_concat(r.role_name)
+			FROM
+				tb_role r,
+				tb_user_role s
+			WHERE
+				r.id = s.role_id
+			AND s.user_id = u.id
+		) roleName
+	FROM
+		tb_user u
+	LEFT JOIN tb_company c ON c.company_code = u.company_code
+    <if test="_parameter != null">
+		<include refid="Where_Clause" />
+	</if>
+  </select> 
+  
+	<select id="findById" resultMap="BaseResultMap" parameterType="Integer">
+		select
+		<include refid="Base_Column_List" />
+		,(select group_concat(r.role_name) from tb_role r,tb_user_role s where r.id=s.role_id and s.user_id= u.id) roleName
+		from tb_user u where u.id = #{id}
+	</select>
+  
+</mapper>

@@ -1,0 +1,280 @@
+<!DOCTYPE html>
+<html xmlns:layout="http://www.w3.org/1999/xhtml"
+	xmlns:th="http://www.w3.org/1999/xhtml"
+	layout:decorator="../layout/default"
+	xmlns:sec="http://www.thymeleaf.org/thymeleaf-extras-springsecurity4">
+<head>
+<meta charset="utf-8"/>
+<title>角色管理</title>
+ 
+<style>
+.chargeBox {
+	overflow-y: auto;
+	width: 100%;
+	float: left;
+	border: 1px solid #e5e6e7;
+	margin-top: 10px;
+	    border-radius: 5px;
+}
+
+.list-group-item {
+	border-left: none;
+	border-right: none;
+	border-top: none;
+	border-bottom: 1px solid #e5e6e7;
+	margin-bottom: 0;
+}
+
+.list-group-item:last-child {
+	border: none;
+}
+
+.list-group {
+	margin-bottom: 0px;
+}
+.node-treeview-selectable2:not(.node-disabled):hover {
+    background-color: #E6F7FF !important;
+}
+</style>
+</head>
+<body>
+	<div layout:fragment="content" class="gray-bg">
+		<div class="row border-bottom">
+	        <nav class="navbar navbar-static-top" role="navigation" style="margin-bottom: 0" th:include="../layout/left :: right_head"> </nav>
+	        <div class="pageheader">
+	           		<ol class="breadcrumb">
+						<li><a href="/main">首页</a></li>
+						<li>系统管理</li>
+						<li><a href="/role/list">角色管理</a></li>
+						<li class="active">新建角色</li>
+					</ol>
+	        </div>
+	    </div>
+		<div class="wrapper wrapper-content animated fadeIn">
+			<div class="row">
+				<div class="col-lg-12">
+					<div class="ibox float-e-margins">
+						<div class="ibox-content">
+							<form class="form-horizontal m-t" id="mainForm" th:action="@{/role/add}" method="post">
+								<div class="form-group">
+									<label class="col-sm-3 control-label">角色名称</label>
+									<div class="col-sm-8 control-wrapper" >
+										<input class="form-control" type="text" name="roleName" id="dName">
+									</div>
+								</div>
+								<div class="form-group">
+									<label class="col-sm-3 control-label">角色描述</label>
+									<div class="col-sm-8 control-wrapper">
+										<input class="form-control" type="text" aria-required="true"
+											aria-invalid="false" name="roleNote">
+									</div>
+								</div>
+								<div class="form-group">
+									<label class="col-sm-3 control-label">选择权限</label>
+									<div class="col-sm-8 control-wrapper" style="margin-top:-10px;">
+										<div id="treeview-selectable2" class="chargeBox"></div>
+										<input type="hidden" id="permissionIds" name="permissionIds" />
+									</div>
+								</div>
+
+								<div class="form-group">
+									<div class="col-sm-8 col-sm-offset-3 control-wrapper">
+										<button class="btn btn-primary" type="button" id="formSubmit">提交</button>
+										<button class="btn btn-white" type="button"	onclick="window.location.href='/role/list'">返回</button>
+									</div>
+								</div>
+							</form>
+						</div>
+					</div>
+				</div>
+			</div>
+		</div>
+
+		<script th:src="@{/js/plugins/validate/jquery.validate.min.js}"></script>
+		<script th:src="@{/js/plugins/validate/messages_zh.min.js}"></script>
+		<script th:src="@{/js/plugins/treeview/bootstrap-treeview.js}"></script>
+		<script th:inline="javascript">
+			data_menu="1_2"
+			var st2;
+			$.ajax({
+				dataType : "json",
+				url : "/role/getTree",
+				data : {
+					roleId : ""
+				},
+				success : function(data) {
+					var initSelectableTree2 = function() {
+						return $('#treeview-selectable2').treeview({
+							data : data,
+							showCheckbox : true,
+							onNodeSelected : function(event, node) {
+
+							},
+							onNodeCollapsed : function(event, node) {
+								st2.treeview('collapseNode', [ node, {
+									ignoreChildren : true
+								} ])
+							},
+							onNodeExpanded : function(event, node) {
+								//alert(node.parentId)	
+							},
+							onNodeChecked : function(event, node) {
+								checkChild(node, st2);
+								checkParent(node, st2);
+
+							},
+							onNodeUnchecked : function(event, node) {
+								uncheckChild(node, st2);
+								checkParent(node, st2);
+							}
+
+						});
+					};
+					st2 = initSelectableTree2();
+					st2.treeview('expandAll', {
+						silent : true
+					});
+				}
+			});
+
+			function parentExpand(id) {
+				st.treeview('expandNode', [ id, {
+					silent : true
+				} ]);
+				var pid = st.treeview('getParent', id).nodeId;
+				if (pid) {
+					parentExpand(pid);
+				}
+				;
+			}
+			function checkChild(node, tree) {
+
+				for ( var i in node.nodes) {
+					tree.treeview('checkNode', [ node.nodes[i].nodeId, {
+						silent : true
+					} ]);
+
+					node.nodes[i].state.checked = true;
+					//console.info(node.nodes[i].state.checked)
+					if (node.nodes[i].nodes) {
+						checkChild(node.nodes[i], tree);
+					}
+				}
+			}
+			function uncheckChild(node, tree) {
+				for ( var i in node.nodes) {
+					tree.treeview('uncheckNode', [ node.nodes[i].nodeId, {
+						silent : true
+					} ])
+					if (node.nodes[i].nodes) {
+						uncheckChild(node.nodes[i], tree);
+					}
+				}
+			}
+			function checkParent(node, tree) {
+				var pNode = tree.treeview('getParent', node);
+				if (pNode != undefined && pNode.state) {
+					var isCheck = false;
+					for ( var i in pNode.nodes) {
+						if (pNode.nodes[i].state.checked == true) {
+							isCheck = true;
+							break;
+						}
+					}
+					if (isCheck) {
+						tree.treeview('checkNode', [ pNode.nodeId, {
+							silent : true
+						} ]);
+						checkParent(pNode, tree);
+					} else {
+						tree.treeview('uncheckNode', [ pNode.nodeId, {
+							silent : true
+						} ]);
+						checkParent(pNode, tree);
+					}
+				}
+			}
+
+			$("#formSubmit").click(function() {
+				var tarr = st2.treeview('getChecked', {
+					silent : true
+				});
+
+				var idArr = "";
+				for ( var i in tarr) {
+					idArr += tarr[i].id + ",";
+				}
+				$("#permissionIds").val(idArr)
+
+				var resultFlag = $("#mainForm").valid();
+				if (resultFlag) {
+				 	$("#formSubmit").prop("disabled",true);
+					$("#mainForm").submit();
+				}
+			})
+			var a = "<i class='fa fa-times-circle'></i> "
+			$("#mainForm").validate(
+							{
+								onfocusout : function(element) {
+									$(element).valid();
+								},
+								ignore : "ignore",
+								rules : {
+									roleName:{
+										required:true ,
+										maxlength: 20,
+										remote:{
+											type:"POST",
+											url:"../role/isRoleNameExsit",
+											data:{
+							                        //多参数传递,每个值需要用function返回,
+							                   roleName:function(){ 
+							                          return $('#dName').val();
+							           		        },
+							                   name:function(){
+							                          return "";
+							                        }
+							        			 } 
+											}
+									},
+									permissionIds : {
+										required : true
+									},
+									roleNote:{
+										maxlength: 50,
+										required:true
+									}
+								},
+								messages : {
+									roleName:{
+										required:a+"必填",
+										maxlength: a+"限定20字符内",
+										remote:a+"角色名已存在，请重新输入！"
+									},
+									permissionIds : {
+										required :  a +"请选择"
+									},
+									remark:{
+										maxlength: a+"限定50字符内",
+										required:a+"必填",
+									}
+								},
+								highlight : function(element, errorClass,validClass) {
+									//打开高亮
+									$(element).parent().removeClass("has-success").addClass("has-error")
+								},
+								unhighlight : function(element, errorClass,validClass) {
+									//关闭高亮
+									$(element).parent().removeClass("has-error").addClass("has-success")
+								},
+								errorPlacement : function(error, element) {
+									error.appendTo(element.parent());
+								},
+								errorClass : "help-block",
+								errorElement : "div"
+
+							})
+		</script>
+	</div>
+</body>
+</html>

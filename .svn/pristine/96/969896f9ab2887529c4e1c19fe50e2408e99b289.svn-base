@@ -1,0 +1,19 @@
+/* #ff4800 */
+
+/*外加css*/
+.header_one{height:70px;width:100%;border-bottom:1px solid #7b8098;}
+
+.form_h{margin:15px auto;}
+.form_h .one_third{margin-bottom:10px;float:left;display:inline-block;width:auto;}
+.stdform .field input{min-width:150px;width:auto;}
+.form_h .stdformbutton{}
+.form_h .sb_u{margin:auto;text-align:right;display:block;overflow:hidden;width:100%;}
+.form_h .sb_u .submit{min-width:80px;}
+.con_tb .pagination{float:right}
+.con_tb .dataTables_paginate{overflow: hidden;}
+.contentwrapper .subcontent .stdform .p{margin:20px auto;overflow: hidden;}
+.stab_cd{margin-bottom:20px;}
+.stab_cd .dataTables_length{border-bottom:1px solid #ddd;}
+.stab_cd .stdtable{border-left:1px solid #ddd;}
+.stab_cd .stdtable th{background-color: #FCFCFC;border-right:1px solid #eee;border-bottom:1px solid #eee; text-align:center;}
+.stab_cd .stdtable td{background-color: #fff;}

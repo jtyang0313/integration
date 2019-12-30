@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.yjt.mapper.PermissionMapper" >
+  <resultMap id="BaseResultMap" type="Permission" >
+    <id column="ID" property="id" jdbcType="VARCHAR" />
+    <result column="PARENT_ID" property="parentId" jdbcType="VARCHAR" />
+    <result column="permission_name" property="permissionName" jdbcType="VARCHAR" />
+    <result column="permission_code" property="permissionCode" jdbcType="VARCHAR" />
+  </resultMap>
+   
+  <sql id="Base_Column_List" >
+    ID, PARENT_ID, permission_name, permission_code
+  </sql>
+  
+  <select id="getPerByRid"  resultMap="BaseResultMap" parameterType="list" >  
+	SELECT
+		p.ID,
+		p.permission_name,
+		p.permission_code,
+		p.parent_id
+	FROM
+		tb_permission p
+	INNER JOIN tb_role_permission r ON r.permission_id = p.ID
+	WHERE
+		r.role_id in 
+	<foreach item="item" index="index" collection="list" open="(" separator="," close=")"> 
+	    #{item} 
+	</foreach> 
+  </select>
+  
+</mapper>
