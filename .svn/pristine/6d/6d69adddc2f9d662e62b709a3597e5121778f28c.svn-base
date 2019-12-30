@@ -1,8 +1,0 @@
-package com.yjt.mapper;
-
-import com.baomidou.mybatisplus.core.mapper.BaseMapper;
-import com.yjt.entity.CompanyFile;
-
-public interface CompanyFileMapper extends BaseMapper<CompanyFile>{
-
-}
